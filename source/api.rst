@@ -46,10 +46,43 @@ SSH-JWT authentication is the **modern and preferred** way to authenticate with 
 
    Paste the contents of your **public key file** (for example, ``~/.ssh/id_rsa.pub``).
 
-3. **Make an authenticated API request**
+3. **Sign a JWT with your private key**
 
-   Use your **private key** to sign a JWT, or use a helper tool or SDK that does so automatically.
-   Then include the signed token in your HTTP request as follows:
+   The JWT must be:
+
+   - Signed with your RSA **private key** (the public half is what you uploaded in step 2).
+   - Algorithm: ``RS256``.
+   - Carry exactly these three claims: ``email``, ``iat``, ``exp``.
+
+   ``email`` must match the email on your TPA Stream account
+   (case-insensitive). ``iat`` and ``exp`` are seconds since the Unix epoch;
+   we recommend a short TTL (15 minutes is plenty).
+
+   Minimum working example in Python (``pyjwt`` + ``cryptography``):
+
+   .. code-block:: python
+
+      import jwt
+      import time
+
+      now = int(time.time())
+      token = jwt.encode(
+          {
+              "email": "you@example.com",
+              "iat": now,
+              "exp": now + 900,  # 15 minutes
+          },
+          open("/path/to/id_rsa").read(),
+          algorithm="RS256",
+      )
+
+   A reference implementation lives at
+   `scripts/crawl/client.py:make_ssh_jwt <https://github.com/LakeEriePartners/stream/blob/master/scripts/crawl/client.py>`_
+   in the stream repo.
+
+4. **Make an authenticated API request**
+
+   Include the signed token in the ``Authorization`` header:
 
    .. code-block:: bash
 
@@ -57,12 +90,38 @@ SSH-JWT authentication is the **modern and preferred** way to authenticate with 
         -H "Authorization: SSH-JWT <your_signed_jwt>" \
         https://app.tpastream.com/api/claims
 
-   The server will verify your JWT using your registered public key.
+   The server verifies the signature against your registered public key.
 
-4. **Optional IP Allowlist**
+5. **Optional IP Allowlist**
 
    To provide an extra layer of security, each user can specify an **IP CIDR allowlist** (for example, ``10.0.0.0/8``).
    API requests originating outside this range will be **rejected**.
+
+Common mistakes
+~~~~~~~~~~~~~~~
+
+If your request returns a 4xx, the response body's ``message`` field
+will tell you what's wrong. The most frequent causes:
+
+- **400 — JWT could not be decoded**: the token is malformed (bad
+  base64, wrong number of segments, not actually a JWT). Re-encode
+  with a known-good library.
+- **400 — JWT missing required claim(s)**: at least one of ``email``,
+  ``iat``, or ``exp`` is absent from the payload. All three are
+  required.
+- **401 — JWT signature did not verify**: the email matched an
+  account on our side, but the token was signed with a private key
+  whose public half is not on file (or the token has expired).
+  Confirm you are signing with the private key whose public half you
+  uploaded in step 2.
+- **403** with no descriptive body: the email in the JWT does not
+  match any active TPA Stream user, or the request is hitting an IP
+  that's not in your allowlist (if you configured one).
+- **Wrong algorithm**: the token must be signed ``RS256``. Other
+  algorithms are rejected.
+- **ed25519 / DSA keys**: only RSA keys are accepted. If you generated
+  your key with ``ssh-keygen -t ed25519``, regenerate with
+  ``ssh-keygen -t rsa -b 4096``.
 
 API Tokens (Legacy)
 -------------------

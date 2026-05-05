@@ -29,14 +29,19 @@ SSH-JWT authentication is the **modern and preferred** way to authenticate with 
 
 1. **Generate an SSH keypair**
 
-   Run the following command in your terminal (Linux, macOS, or Git Bash on Windows):
+   Run one of the following in your terminal (Linux, macOS, or
+   Git Bash on Windows):
 
    .. code-block:: bash
 
-      ssh-keygen
+      ssh-keygen -t ed25519              # recommended for new keys
+      ssh-keygen -t rsa -b 4096          # broadly compatible
+      ssh-keygen -t ecdsa -b 521         # NIST P-521
 
    - When prompted for a file path, press Enter to accept the default.
    - You may optionally set a passphrase.
+
+   See :ref:`generating-an-ssh-key` for the full prompt walk-through.
 
 2. **Add your public key to your TPA Stream account**
 
@@ -257,6 +262,8 @@ however, we **highly recommend** a more restrictive range to provide an extra la
 This range can be configured on the
 `Manage Users <https://app.tpastream.com/settings/users>`_ page under Settings.
 
+
+.. _generating-an-ssh-key:
 
 Generating an SSH Key
 ---------------------

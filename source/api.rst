@@ -50,9 +50,23 @@ SSH-JWT authentication is the **modern and preferred** way to authenticate with 
 
    The JWT must be:
 
-   - Signed with your RSA **private key** (the public half is what you uploaded in step 2).
-   - Algorithm: ``RS256``.
+   - Signed with the **private key** whose public half you uploaded in step 2.
    - Carry exactly these three claims: ``email``, ``iat``, ``exp``.
+   - Use the algorithm matching your key type:
+
+     +------------------+--------------------+
+     | Key type         | JWT ``alg``        |
+     +==================+====================+
+     | RSA              | ``RS256``          |
+     +------------------+--------------------+
+     | Ed25519          | ``EdDSA``          |
+     +------------------+--------------------+
+     | ECDSA P-256      | ``ES256``          |
+     +------------------+--------------------+
+     | ECDSA P-384      | ``ES384``          |
+     +------------------+--------------------+
+     | ECDSA P-521      | ``ES512``          |
+     +------------------+--------------------+
 
    ``email`` must match the email on your TPA Stream account
    (case-insensitive). ``iat`` and ``exp`` are seconds since the Unix epoch;
@@ -73,10 +87,11 @@ SSH-JWT authentication is the **modern and preferred** way to authenticate with 
               "exp": now + 900,  # 15 minutes
           },
           open("/path/to/id_rsa").read(),
-          algorithm="RS256",
+          algorithm="RS256",  # or EdDSA / ES256 / ES384 / ES512
       )
 
-   A reference implementation lives at
+   A reference implementation that autodetects the algorithm from the
+   key type lives at
    `scripts/crawl/client.py:make_ssh_jwt <https://github.com/LakeEriePartners/stream/blob/master/scripts/crawl/client.py>`_
    in the stream repo.
 
@@ -117,11 +132,16 @@ will tell you what's wrong. The most frequent causes:
 - **403** with no descriptive body: the email in the JWT does not
   match any active TPA Stream user, or the request is hitting an IP
   that's not in your allowlist (if you configured one).
-- **Wrong algorithm**: the token must be signed ``RS256``. Other
-  algorithms are rejected.
-- **ed25519 / DSA keys**: only RSA keys are accepted. If you generated
-  your key with ``ssh-keygen -t ed25519``, regenerate with
-  ``ssh-keygen -t rsa -b 4096``.
+- **Wrong algorithm**: the JWT ``alg`` header must match the key type
+  you uploaded (see the table above). For example, an Ed25519 key
+  paired with ``RS256`` will be rejected as ``400 — JWT 'alg' header
+  is 'RS256'``.
+- **DSA keys / unusual ECDSA curves**: TPA Stream accepts RSA,
+  Ed25519, and ECDSA on the NIST P-256, P-384, and P-521 curves.
+  DSA keys and ECDSA on other curves (e.g. ``secp256k1``) are
+  rejected at upload time. If you generated a DSA key, regenerate
+  with one of the supported types (``ssh-keygen -t ed25519`` is the
+  modern default).
 
 API Tokens (Legacy)
 -------------------
@@ -166,15 +186,23 @@ Generating an SSH Key
 To generate an SSH keypair:
 
 1. Open your Terminal (on Linux/Mac) or Git Bash (Windows)
-2. Paste the following command:
+2. Paste one of the following commands, depending on which key type
+   you want to use:
 
-   ``ssh-keygen``
+   .. code-block:: bash
+
+      # Ed25519 (recommended for new keys: short, fast, modern)
+      ssh-keygen -t ed25519
+      # RSA (4096-bit, broadly compatible)
+      ssh-keygen -t rsa -b 4096
+      # ECDSA on NIST P-521
+      ssh-keygen -t ecdsa -b 521
 
    This creates a new SSH keypair.
 
    a. When prompted to "Enter a file in which to save the key," press Enter to accept the default location.
 
-      ``Enter a file in which to save the key (/home/you/.ssh/algorithm): [Press enter]``
+      ``Enter a file in which to save the key (/home/you/.ssh/id_<type>): [Press enter]``
 
    b. At the prompt, you may enter a secure passphrase (optional).
 

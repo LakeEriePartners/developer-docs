@@ -44,7 +44,8 @@ SSH-JWT authentication is the **modern and preferred** way to authenticate with 
 
    https://app.tpastream.com/settings/ssh
 
-   Paste the contents of your **public key file** (for example, ``~/.ssh/id_rsa.pub``).
+   Paste the contents of your **public key file** (for example,
+   ``~/.ssh/id_ed25519.pub`` or ``~/.ssh/id_rsa.pub``).
 
    You can upload **multiple keys** to the same account. The server
    tries each one in turn during verification, so this is the right
@@ -93,7 +94,7 @@ SSH-JWT authentication is the **modern and preferred** way to authenticate with 
       import jwt
       from cryptography.hazmat.primitives import serialization
 
-      with open("/path/to/id_rsa", "rb") as fh:
+      with open("/path/to/id_ed25519", "rb") as fh:
           private_key = serialization.load_ssh_private_key(
               fh.read(), password=None
           )
@@ -106,7 +107,7 @@ SSH-JWT authentication is the **modern and preferred** way to authenticate with 
               "exp": now + 900,  # 15 minutes
           },
           private_key,
-          algorithm="RS256",  # or EdDSA / ES256 / ES384 / ES512
+          algorithm="EdDSA",  # RS256 for RSA, ES256/ES384/ES512 for ECDSA P-256/P-384/P-521
       )
 
    The ``serialization.load_ssh_private_key`` step is what handles

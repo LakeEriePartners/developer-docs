@@ -16853,7 +16853,7 @@
   "paths": {
     "/api/campaign/{campaign_uuid}/tpafile": {
       "get": {
-        "operationId": "get_campaign_tpafile",
+        "operationId": "get_campaign_tpafile_by_campaign_uuid",
         "parameters": [],
         "responses": {
           "200": {
@@ -16873,7 +16873,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get campaign tpafile",
+        "summary": "List campaign tpafile",
         "tags": [
           "TPAFile"
         ]
@@ -16892,7 +16892,7 @@
     },
     "/api/claim/{claim_id}/tpafile": {
       "get": {
-        "operationId": "get_claim_tpafile",
+        "operationId": "get_claim_tpafile_by_claim_id",
         "parameters": [],
         "responses": {
           "200": {
@@ -16912,7 +16912,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get claim tpafile",
+        "summary": "List claim tpafile",
         "tags": [
           "TPAFile"
         ]
@@ -16960,7 +16960,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get crawl log",
+        "summary": "List crawl log",
         "tags": [
           "Crawls"
         ]
@@ -16968,7 +16968,7 @@
     },
     "/api/employer-contact/{employer_contact_id}": {
       "delete": {
-        "operationId": "delete_employer_contact",
+        "operationId": "delete_employer_contact_by_employer_contact_id",
         "responses": {
           "default": {
             "$ref": "#/components/responses/DEFAULT_ERROR"
@@ -16980,7 +16980,7 @@
         ]
       },
       "get": {
-        "operationId": "get_employer_contact",
+        "operationId": "get_employer_contact_by_employer_contact_id",
         "responses": {
           "200": {
             "content": {
@@ -17013,7 +17013,7 @@
         }
       ],
       "put": {
-        "operationId": "put_employer_contact",
+        "operationId": "put_employer_contact_by_employer_contact_id",
         "requestBody": {
           "content": {
             "application/json": {
@@ -17050,7 +17050,7 @@
     },
     "/api/employer/{employer_id}/contact": {
       "get": {
-        "operationId": "get_employer_contact",
+        "operationId": "get_employer_contact_by_employer_id",
         "parameters": [
           {
             "in": "query",
@@ -17106,7 +17106,7 @@
         }
       ],
       "post": {
-        "operationId": "post_employer_contact",
+        "operationId": "post_employer_contact_by_employer_id",
         "requestBody": {
           "content": {
             "application/json": {
@@ -17143,7 +17143,7 @@
     },
     "/api/employer/{employer_id}/invoice": {
       "get": {
-        "operationId": "get_employer_invoice",
+        "operationId": "get_employer_invoice_by_employer_id",
         "parameters": [
           {
             "in": "query",
@@ -17182,7 +17182,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get employer invoice",
+        "summary": "List employer invoice",
         "tags": [
           "Invoices"
         ]
@@ -17201,7 +17201,7 @@
     },
     "/api/employer/{employer_id}/invoice/{invoice_id}": {
       "get": {
-        "operationId": "get_employer_invoice",
+        "operationId": "get_employer_invoice_by_employer_id_and_invoice_id",
         "responses": {
           "200": {
             "content": {
@@ -17217,7 +17217,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get employer invoice",
+        "summary": "Get one employer invoice",
         "tags": [
           "Invoices"
         ]
@@ -17245,7 +17245,7 @@
     },
     "/api/employer/{employer_id}/subscription": {
       "get": {
-        "operationId": "get_employer_subscription",
+        "operationId": "get_employer_subscription_by_employer_id",
         "parameters": [
           {
             "in": "query",
@@ -17284,7 +17284,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get employer subscription",
+        "summary": "List employer subscription",
         "tags": [
           "Subscriptions"
         ]
@@ -17303,7 +17303,7 @@
     },
     "/api/employer/{employer_id}/subscription/active": {
       "get": {
-        "operationId": "get_employer_subscription_active",
+        "operationId": "get_employer_subscription_active_by_employer_id",
         "responses": {
           "200": {
             "content": {
@@ -17319,7 +17319,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get employer subscription active",
+        "summary": "List employer subscription active",
         "tags": [
           "Subscriptions"
         ]
@@ -17338,7 +17338,7 @@
     },
     "/api/employer/{employer_id}/subscription/{subscription_id}": {
       "get": {
-        "operationId": "get_employer_subscription",
+        "operationId": "get_employer_subscription_by_employer_id_and_subscription_id",
         "responses": {
           "200": {
             "content": {
@@ -17354,7 +17354,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get employer subscription",
+        "summary": "Get one employer subscription",
         "tags": [
           "Subscriptions"
         ]
@@ -17433,7 +17433,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice",
+        "summary": "List invoice",
         "tags": [
           "Invoices"
         ]
@@ -17441,7 +17441,7 @@
     },
     "/api/invoice/{invoice_id}": {
       "get": {
-        "operationId": "get_invoice",
+        "operationId": "get_invoice_by_invoice_id",
         "responses": {
           "200": {
             "content": {
@@ -17457,7 +17457,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice",
+        "summary": "Get one invoice",
         "tags": [
           "Invoices"
         ]
@@ -17474,7 +17474,7 @@
         }
       ],
       "put": {
-        "operationId": "put_invoice",
+        "operationId": "put_invoice_by_invoice_id",
         "requestBody": {
           "content": {
             "application/json": {
@@ -17511,7 +17511,7 @@
     },
     "/api/invoice/{invoice_id}/subscription-line-tpafile": {
       "get": {
-        "operationId": "get_invoice_subscription_line_tpafile",
+        "operationId": "get_invoice_subscription_line_tpafile_by_invoice_id",
         "parameters": [
           {
             "in": "query",
@@ -17550,7 +17550,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice subscription line tpafile",
+        "summary": "List invoice subscription line tpafile",
         "tags": [
           "TPAFile"
         ]
@@ -17569,7 +17569,7 @@
     },
     "/api/invoice_batch/{invoice_batch_uuid}": {
       "delete": {
-        "operationId": "delete_invoice_batch",
+        "operationId": "delete_invoice_batch_by_invoice_batch_uuid",
         "responses": {
           "default": {
             "$ref": "#/components/responses/DEFAULT_ERROR"
@@ -17642,7 +17642,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get organization",
+        "summary": "List organization",
         "tags": [
           "Organization"
         ]
@@ -17685,7 +17685,7 @@
     },
     "/api/organization/{organization_id}": {
       "delete": {
-        "operationId": "delete_organization",
+        "operationId": "delete_organization_by_organization_id",
         "parameters": [
           {
             "in": "query",
@@ -17739,7 +17739,7 @@
         ]
       },
       "get": {
-        "operationId": "get_organization",
+        "operationId": "get_organization_by_organization_id",
         "parameters": [
           {
             "in": "query",
@@ -17787,7 +17787,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get organization",
+        "summary": "Get one organization",
         "tags": [
           "Organization"
         ]
@@ -17804,7 +17804,7 @@
         }
       ],
       "put": {
-        "operationId": "put_organization",
+        "operationId": "put_organization_by_organization_id",
         "parameters": [],
         "responses": {
           "200": {
@@ -17832,7 +17832,7 @@
     },
     "/api/outbound-task/{outbound_task_id}/tpafile": {
       "get": {
-        "operationId": "get_outbound_task_tpafile",
+        "operationId": "get_outbound_task_tpafile_by_outbound_task_id",
         "parameters": [],
         "responses": {
           "200": {
@@ -17852,7 +17852,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get outbound task tpafile",
+        "summary": "List outbound task tpafile",
         "tags": [
           "TPAFile"
         ]
@@ -17910,7 +17910,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get payer health",
+        "summary": "List payer health",
         "tags": [
           "Payer Health"
         ]
@@ -17918,7 +17918,7 @@
     },
     "/api/payer/{payer_id}/health": {
       "get": {
-        "operationId": "get_payer_health",
+        "operationId": "get_payer_health_by_payer_id",
         "responses": {
           "200": {
             "content": {
@@ -17934,7 +17934,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get payer health",
+        "summary": "List payer health",
         "tags": [
           "Payer Health"
         ]
@@ -17953,7 +17953,7 @@
     },
     "/api/payer/{payer_id}/health/crawl-status-by-hour": {
       "get": {
-        "operationId": "get_payer_health_crawl_status_by_hour",
+        "operationId": "get_payer_health_crawl_status_by_hour_by_payer_id",
         "responses": {
           "200": {
             "content": {
@@ -18027,7 +18027,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get subscription",
+        "summary": "List subscription",
         "tags": [
           "Subscriptions"
         ]
@@ -18086,7 +18086,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get subscription active",
+        "summary": "List subscription active",
         "tags": [
           "Subscriptions"
         ]
@@ -18094,7 +18094,7 @@
     },
     "/api/subscription/{subscription_id}": {
       "get": {
-        "operationId": "get_subscription",
+        "operationId": "get_subscription_by_subscription_id",
         "responses": {
           "200": {
             "content": {
@@ -18110,7 +18110,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get subscription",
+        "summary": "Get one subscription",
         "tags": [
           "Subscriptions"
         ]
@@ -18127,7 +18127,7 @@
         }
       ],
       "put": {
-        "operationId": "put_subscription",
+        "operationId": "put_subscription_by_subscription_id",
         "requestBody": {
           "content": {
             "application/json": {
@@ -18164,7 +18164,7 @@
     },
     "/api/subscription/{subscription_id}/subscription_line": {
       "get": {
-        "operationId": "get_subscription_subscription_line",
+        "operationId": "get_subscription_subscription_line_by_subscription_id",
         "parameters": [
           {
             "in": "query",
@@ -18203,7 +18203,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get subscription subscription line",
+        "summary": "List subscription subscription line",
         "tags": [
           "Subscription Lines"
         ]
@@ -18222,7 +18222,7 @@
     },
     "/api/subscription/{subscription_id}/subscription_line/{subscription_line_id}": {
       "get": {
-        "operationId": "get_subscription_subscription_line",
+        "operationId": "get_subscription_subscription_line_by_subscription_id_and_subscription_line_id",
         "responses": {
           "200": {
             "content": {
@@ -18238,7 +18238,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get subscription subscription line",
+        "summary": "Get one subscription subscription line",
         "tags": [
           "Subscription Lines"
         ]
@@ -18305,7 +18305,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get subscription line",
+        "summary": "List subscription line",
         "tags": [
           "Subscription Lines"
         ]
@@ -18348,7 +18348,7 @@
     },
     "/api/subscription_line/{subscription_line_id}": {
       "delete": {
-        "operationId": "delete_subscription_line",
+        "operationId": "delete_subscription_line_by_subscription_line_id",
         "responses": {
           "default": {
             "$ref": "#/components/responses/DEFAULT_ERROR"
@@ -18360,7 +18360,7 @@
         ]
       },
       "get": {
-        "operationId": "get_subscription_line",
+        "operationId": "get_subscription_line_by_subscription_line_id",
         "responses": {
           "200": {
             "content": {
@@ -18376,7 +18376,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get subscription line",
+        "summary": "Get one subscription line",
         "tags": [
           "Subscription Lines"
         ]
@@ -18393,7 +18393,7 @@
         }
       ],
       "put": {
-        "operationId": "put_subscription_line",
+        "operationId": "put_subscription_line_by_subscription_line_id",
         "requestBody": {
           "content": {
             "application/json": {
@@ -18430,7 +18430,7 @@
     },
     "/api/subscription_line/{subscription_line_id}/subscription_line_commission": {
       "get": {
-        "operationId": "get_subscription_line_subscription_line_commission",
+        "operationId": "get_subscription_line_subscription_line_commission_by_subscription_line_id",
         "parameters": [
           {
             "in": "query",
@@ -18469,7 +18469,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get subscription line subscription line commission",
+        "summary": "List subscription line subscription line commission",
         "tags": [
           "Subscription Line Commissions"
         ]
@@ -18488,7 +18488,7 @@
     },
     "/api/subscription_line/{subscription_line_id}/subscription_line_commission/{subscription_line_commission_id}": {
       "get": {
-        "operationId": "get_subscription_line_subscription_line_commission",
+        "operationId": "get_subscription_line_subscription_line_commission_by_subscription_line_id_and_subscription_line_commission_id",
         "responses": {
           "200": {
             "content": {
@@ -18504,7 +18504,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get subscription line subscription line commission",
+        "summary": "Get one subscription line subscription line commission",
         "tags": [
           "Subscription Line Commissions"
         ]
@@ -18532,7 +18532,7 @@
     },
     "/api/subscription_line/{subscription_line_id}/tpafile": {
       "get": {
-        "operationId": "get_subscription_line_tpafile",
+        "operationId": "get_subscription_line_tpafile_by_subscription_line_id",
         "parameters": [
           {
             "in": "query",
@@ -18571,7 +18571,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get subscription line tpafile",
+        "summary": "List subscription line tpafile",
         "tags": [
           "TPAFile"
         ]
@@ -18588,7 +18588,7 @@
         }
       ],
       "post": {
-        "operationId": "post_subscription_line_tpafile",
+        "operationId": "post_subscription_line_tpafile_by_subscription_line_id",
         "parameters": [],
         "responses": {
           "200": {
@@ -18616,7 +18616,7 @@
     },
     "/api/subscription_line/{subscription_line_id}/tpafile/{subscription_line_tpafile_id}": {
       "delete": {
-        "operationId": "delete_subscription_line_tpafile",
+        "operationId": "delete_subscription_line_tpafile_by_subscription_line_id_and_subscription_line_tpafile_id",
         "parameters": [],
         "responses": {
           "200": {
@@ -18703,7 +18703,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get subscription line commission",
+        "summary": "List subscription line commission",
         "tags": [
           "Subscription Line Commissions"
         ]
@@ -18746,7 +18746,7 @@
     },
     "/api/subscription_line_commission/{subscription_line_commission_id}": {
       "delete": {
-        "operationId": "delete_subscription_line_commission",
+        "operationId": "delete_subscription_line_commission_by_subscription_line_commission_id",
         "responses": {
           "default": {
             "$ref": "#/components/responses/DEFAULT_ERROR"
@@ -18758,7 +18758,7 @@
         ]
       },
       "get": {
-        "operationId": "get_subscription_line_commission",
+        "operationId": "get_subscription_line_commission_by_subscription_line_commission_id",
         "responses": {
           "200": {
             "content": {
@@ -18774,7 +18774,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get subscription line commission",
+        "summary": "Get one subscription line commission",
         "tags": [
           "Subscription Line Commissions"
         ]
@@ -18791,7 +18791,7 @@
         }
       ],
       "put": {
-        "operationId": "put_subscription_line_commission",
+        "operationId": "put_subscription_line_commission_by_subscription_line_commission_id",
         "requestBody": {
           "content": {
             "application/json": {
@@ -18834,7 +18834,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get accounts terming count",
+        "summary": "List accounts terming count",
         "tags": [
           "api"
         ]
@@ -18913,7 +18913,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get claims",
+        "summary": "List claims",
         "tags": [
           "Claims"
         ]
@@ -18921,7 +18921,7 @@
     },
     "/api/v2/claims/{claim_medical_id}": {
       "get": {
-        "operationId": "get_v2_claims",
+        "operationId": "get_v2_claims_by_claim_medical_id",
         "responses": {
           "200": {
             "content": {
@@ -18937,7 +18937,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get claims",
+        "summary": "Get one claims",
         "tags": [
           "Claims"
         ]
@@ -18956,7 +18956,7 @@
     },
     "/api/v2/employer/{employer_id}/member": {
       "get": {
-        "operationId": "get_v2_employer_member",
+        "operationId": "get_v2_employer_member_by_employer_id",
         "parameters": [
           {
             "in": "query",
@@ -18995,7 +18995,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get employer member",
+        "summary": "List employer member",
         "tags": [
           "Members"
         ]
@@ -19014,7 +19014,7 @@
     },
     "/api/v2/employer/{employer_id}/member/{member_id}": {
       "get": {
-        "operationId": "get_v2_employer_member",
+        "operationId": "get_v2_employer_member_by_employer_id_and_member_id",
         "parameters": [
           {
             "in": "query",
@@ -19053,7 +19053,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get employer member",
+        "summary": "Get one employer member",
         "tags": [
           "Members"
         ]
@@ -19087,7 +19087,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get employer access count",
+        "summary": "List employer access count",
         "tags": [
           "api"
         ]
@@ -19101,7 +19101,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice dashboard ar aging",
+        "summary": "List invoice dashboard ar aging",
         "tags": [
           "api"
         ]
@@ -19115,7 +19115,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice dashboard billing cycle",
+        "summary": "List invoice dashboard billing cycle",
         "tags": [
           "api"
         ]
@@ -19129,7 +19129,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice dashboard fee mix",
+        "summary": "List invoice dashboard fee mix",
         "tags": [
           "api"
         ]
@@ -19143,7 +19143,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice dashboard invoice volume",
+        "summary": "List invoice dashboard invoice volume",
         "tags": [
           "api"
         ]
@@ -19171,7 +19171,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice dashboard revenue trend",
+        "summary": "List invoice dashboard revenue trend",
         "tags": [
           "api"
         ]
@@ -19185,7 +19185,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice dashboard source mix",
+        "summary": "List invoice dashboard source mix",
         "tags": [
           "api"
         ]
@@ -19199,7 +19199,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice dashboard top employers",
+        "summary": "List invoice dashboard top employers",
         "tags": [
           "api"
         ]
@@ -19213,7 +19213,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice kpi collection rate",
+        "summary": "List invoice kpi collection rate",
         "tags": [
           "api"
         ]
@@ -19227,7 +19227,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice kpi invoiced",
+        "summary": "List invoice kpi invoiced",
         "tags": [
           "api"
         ]
@@ -19241,7 +19241,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice kpi invoices count",
+        "summary": "List invoice kpi invoices count",
         "tags": [
           "api"
         ]
@@ -19255,7 +19255,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice kpi outstanding balance",
+        "summary": "List invoice kpi outstanding balance",
         "tags": [
           "api"
         ]
@@ -19269,7 +19269,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get invoice overdue stats",
+        "summary": "List invoice overdue stats",
         "tags": [
           "api"
         ]
@@ -19389,7 +19389,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get mailgun webhook",
+        "summary": "List mailgun webhook",
         "tags": [
           "Mailgun Webhook Event"
         ]
@@ -19436,7 +19436,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get member",
+        "summary": "List member",
         "tags": [
           "Members"
         ]
@@ -19510,7 +19510,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get payer",
+        "summary": "List payer",
         "tags": [
           "Payers"
         ]
@@ -19518,7 +19518,7 @@
     },
     "/api/v2/payer/{payer_id}": {
       "get": {
-        "operationId": "get_v2_payer",
+        "operationId": "get_v2_payer_by_payer_id",
         "parameters": [
           {
             "in": "query",
@@ -19566,7 +19566,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get payer",
+        "summary": "Get one payer",
         "tags": [
           "Payers"
         ]
@@ -19585,7 +19585,7 @@
     },
     "/api/v2/policy_holder/{policy_holder_id}/claims": {
       "get": {
-        "operationId": "get_v2_policy_holder_claims",
+        "operationId": "get_v2_policy_holder_claims_by_policy_holder_id",
         "parameters": [
           {
             "in": "query",
@@ -19656,7 +19656,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get policy holder claims",
+        "summary": "List policy holder claims",
         "tags": [
           "Claims"
         ]
@@ -19675,7 +19675,7 @@
     },
     "/api/v2/policy_holder/{policy_holder_id}/claims/{claim_medical_id}": {
       "get": {
-        "operationId": "get_v2_policy_holder_claims",
+        "operationId": "get_v2_policy_holder_claims_by_policy_holder_id_and_claim_medical_id",
         "responses": {
           "200": {
             "content": {
@@ -19691,7 +19691,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get policy holder claims",
+        "summary": "Get one policy holder claims",
         "tags": [
           "Claims"
         ]
@@ -19730,7 +19730,7 @@
         }
       ],
       "post": {
-        "operationId": "post_v2_policy_holder_crawl",
+        "operationId": "post_v2_policy_holder_crawl_by_policy_holder_id",
         "parameters": [
           {
             "in": "query",
@@ -19775,7 +19775,7 @@
     },
     "/api/v2/vendor-tenant/{vendor_tenant_label}/employer": {
       "get": {
-        "operationId": "get_v2_vendor_tenant_employer",
+        "operationId": "get_v2_vendor_tenant_employer_by_vendor_tenant_label",
         "parameters": [
           {
             "in": "query",
@@ -19814,7 +19814,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get vendor tenant employer",
+        "summary": "List vendor tenant employer",
         "tags": [
           "Employers"
         ]
@@ -19833,7 +19833,7 @@
     },
     "/api/v2/vendor-tenant/{vendor_tenant_label}/employer/{employer_key}": {
       "get": {
-        "operationId": "get_v2_vendor_tenant_employer",
+        "operationId": "get_v2_vendor_tenant_employer_by_vendor_tenant_label_and_employer_key",
         "responses": {
           "200": {
             "content": {
@@ -19849,7 +19849,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get vendor tenant employer",
+        "summary": "Get one vendor tenant employer",
         "tags": [
           "Employers"
         ]
@@ -19877,7 +19877,7 @@
     },
     "/api/v2/vendor-tenant/{vendor_tenant_label}/employer/{employer_key}/member": {
       "get": {
-        "operationId": "get_v2_vendor_tenant_employer_member",
+        "operationId": "get_v2_vendor_tenant_employer_member_by_vendor_tenant_label_and_employer_key",
         "parameters": [
           {
             "in": "query",
@@ -19916,7 +19916,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get vendor tenant employer member",
+        "summary": "List vendor tenant employer member",
         "tags": [
           "Members"
         ]
@@ -19944,7 +19944,7 @@
     },
     "/api/v2/vendor-tenant/{vendor_tenant_label}/employer/{employer_key}/member/{member_key}": {
       "get": {
-        "operationId": "get_v2_vendor_tenant_employer_member",
+        "operationId": "get_v2_vendor_tenant_employer_member_by_vendor_tenant_label_and_employer_key_and_member_key",
         "responses": {
           "200": {
             "content": {
@@ -19960,7 +19960,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get vendor tenant employer member",
+        "summary": "Get one vendor tenant employer member",
         "tags": [
           "Members"
         ]
@@ -19997,7 +19997,7 @@
     },
     "/api/v2/vendor-tenant/{vendor_tenant_label}/employer/{employer_key}/member/{member_key}/claims": {
       "get": {
-        "operationId": "get_v2_vendor_tenant_employer_member_claims",
+        "operationId": "get_v2_vendor_tenant_employer_member_claims_by_vendor_tenant_label_and_employer_key_and_member_key",
         "parameters": [
           {
             "in": "query",
@@ -20045,7 +20045,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get vendor tenant employer member claims",
+        "summary": "List vendor tenant employer member claims",
         "tags": [
           "Claims"
         ]
@@ -20082,7 +20082,7 @@
     },
     "/api/v2/vendor-tenant/{vendor_tenant_label}/employer/{employer_key}/member/{member_key}/policy_holders": {
       "get": {
-        "operationId": "get_v2_vendor_tenant_employer_member_policy_holders",
+        "operationId": "get_v2_vendor_tenant_employer_member_policy_holders_by_vendor_tenant_label_and_employer_key_and_member_key",
         "parameters": [
           {
             "in": "query",
@@ -20130,7 +20130,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get vendor tenant employer member policy holders",
+        "summary": "List vendor tenant employer member policy holders",
         "tags": [
           "Policy Holders"
         ]
@@ -20173,7 +20173,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get accounts members",
+        "summary": "List accounts members",
         "tags": [
           "api"
         ]
@@ -20377,7 +20377,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get members count",
+        "summary": "List members count",
         "tags": [
           "api"
         ]
@@ -20467,7 +20467,7 @@
     },
     "/api/v3/policy_holder/{policy_holder_id}": {
       "delete": {
-        "operationId": "delete_v3_policy_holder",
+        "operationId": "delete_v3_policy_holder_by_policy_holder_id",
         "responses": {
           "default": {
             "$ref": "#/components/responses/DEFAULT_ERROR"
@@ -20479,7 +20479,7 @@
         ]
       },
       "get": {
-        "operationId": "get_v3_policy_holder",
+        "operationId": "get_v3_policy_holder_by_policy_holder_id",
         "responses": {
           "200": {
             "content": {
@@ -20512,7 +20512,7 @@
         }
       ],
       "put": {
-        "operationId": "put_v3_policy_holder",
+        "operationId": "put_v3_policy_holder_by_policy_holder_id",
         "requestBody": {
           "content": {
             "application/json": {
@@ -20578,7 +20578,7 @@
             "$ref": "#/components/responses/DEFAULT_ERROR"
           }
         },
-        "summary": "Get webhook history",
+        "summary": "List webhook history",
         "tags": [
           "Webhooks"
         ]

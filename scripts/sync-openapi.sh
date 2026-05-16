@@ -99,36 +99,77 @@ def tag_for(path):
 # flask-smorest emits neither by default, so endpoints without an
 # explicit @blp.doc(summary=...) decoration come through bare.
 
-METHOD_VERB = {
-    "get":     "get",
-    "post":    "create",
-    "put":     "update",
-    "patch":   "patch",
-    "delete":  "delete",
-    "head":    "head",
-    "options": "options",
+METHOD_VERB_COLLECTION = {  # path ends in resource (no trailing param)
+    "get":     ("list",   "List"),
+    "post":    ("create", "Create"),
+    "put":     ("update", "Update"),
+    "patch":   ("patch",  "Patch"),
+    "delete":  ("delete", "Delete"),
+    "head":    ("head",   "Head"),
+    "options": ("options","Options"),
+}
+METHOD_VERB_ITEM = {        # path ends in {param}
+    "get":     ("get",    "Get one"),
+    "post":    ("create", "Create on"),
+    "put":     ("update", "Update"),
+    "patch":   ("patch",  "Patch"),
+    "delete":  ("delete", "Delete"),
+    "head":    ("head",   "Head"),
+    "options": ("options","Options"),
 }
 
-def humanize_path(path):
-    parts = [p for p in path.split("/") if p and not p.startswith("{") and p != "api"]
-    if parts and parts[0] in ("v2", "v3", "v4"):
-        parts = parts[1:]
-    return " ".join(p.replace("_", " ").replace("-", " ") for p in parts).strip()
+def path_segments(path, drop_params=True):
+    out = []
+    for p in path.split("/"):
+        if not p: continue
+        if p == "api": continue
+        if drop_params and p.startswith("{"): continue
+        out.append(p)
+    return out
 
-def slug_path(path):
-    parts = [p for p in path.split("/") if p and not p.startswith("{") and p != "api"]
-    return "_".join(p.replace("-", "_") for p in parts) or "root"
+def is_item_path(path):
+    """A path like /api/foo/{id} is item-scoped; /api/foo is collection-scoped."""
+    tail = path.rstrip("/").rsplit("/", 1)[-1]
+    return tail.startswith("{") and tail.endswith("}")
+
+def humanize_path(path):
+    segs = path_segments(path, drop_params=True)
+    if segs and segs[0] in ("v2", "v3", "v4"):
+        segs = segs[1:]
+    return " ".join(p.replace("_", " ").replace("-", " ") for p in segs).strip()
+
+def slug_for_op(path, method):
+    """
+    Disambiguate list vs item endpoints by encoding all path params
+    into the slug. /api/invoice → get_invoice; /api/invoice/{invoice_id} →
+    get_invoice_by_invoice_id. Nested params chain naturally:
+    /api/employer/{employer_id}/invoice/{invoice_id} → get_employer_invoice_by_employer_id_and_invoice_id.
+    """
+    fixed = []
+    params = []
+    for p in path.split("/"):
+        if not p or p == "api": continue
+        if p.startswith("{") and p.endswith("}"):
+            params.append(p[1:-1].replace("-", "_"))
+        else:
+            fixed.append(p.replace("-", "_"))
+    base = f"{method}_{'_'.join(fixed) or 'root'}"
+    if params:
+        base += "_by_" + "_and_".join(params)
+    return base
 
 for path, ops in spec.get("paths", {}).items():
+    item_scoped = is_item_path(path)
     for method, op in ops.items():
         if method.startswith("x-") or method == "parameters": continue
         if not isinstance(op, dict): continue
         if not op.get("operationId"):
-            op["operationId"] = f"{method}_{slug_path(path)}"
+            op["operationId"] = slug_for_op(path, method)
         if not op.get("summary"):
-            verb = METHOD_VERB.get(method, method).capitalize()
+            verbs = METHOD_VERB_ITEM if item_scoped else METHOD_VERB_COLLECTION
+            _, label_verb = verbs.get(method, (method, method.capitalize()))
             thing = humanize_path(path)
-            op["summary"] = f"{verb} {thing}".strip() if thing else verb
+            op["summary"] = f"{label_verb} {thing}".strip() if thing else label_verb
 
 DESCRIPTIONS = {}  # tag-name → description (filled as we observe)
 tag_usage = set()

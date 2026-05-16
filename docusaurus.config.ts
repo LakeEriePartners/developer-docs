@@ -15,8 +15,16 @@ const config: Config = {
   projectName: "developer-docs",
 
   onBrokenLinks: "warn",
-  onBrokenMarkdownLinks: "warn",
   onBrokenAnchors: "warn",
+
+  // Docusaurus v4 moves the markdown-link broken-link hook under
+  // markdown.hooks. The top-level `onBrokenMarkdownLinks` will be
+  // removed in v4; this is the v4-compatible location.
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: "warn",
+    },
+  },
 
   i18n: {
     defaultLocale: "en",

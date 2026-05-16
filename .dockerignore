@@ -1,0 +1,15 @@
+.git
+.gitignore
+.github
+node_modules
+build
+.docusaurus
+docs/sdk
+docs/api-reference/*.mdx
+docs/api-reference/*.info.mdx
+docs/api-reference/tag-*.mdx
+**/*.log
+README.md
+.dockerignore
+Dockerfile
+docker-compose*.yml

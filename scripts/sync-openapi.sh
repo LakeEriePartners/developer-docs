@@ -1,23 +1,38 @@
 #!/usr/bin/env bash
-# Refresh the committed OpenAPI snapshot from production.
-# Run when the API has materially changed and you want the docs to
-# reflect it; commit the resulting diff alongside any related
-# narrative changes.
+# Fetch the live OpenAPI spec, post-process, write to openapi/tpastream-api.json.
+#
+# Run by the docs build at every `npm run build` / `npm run start`
+# (via the prebuild / prestart hook in package.json), and also runnable
+# by hand for inspection. The output file is gitignored — the live
+# spec is the source of truth, not a committed snapshot.
+#
+# Network failure handling: if the fetch fails and a previous output
+# file already exists on disk, keep that file and exit 0 with a
+# warning. This lets `npm run start` work offline once you've done at
+# least one successful sync. First-time-offline still fails clearly.
 #
 # Usage:
 #   ./scripts/sync-openapi.sh                 # default: prod
 #   ./scripts/sync-openapi.sh https://...     # override base URL
 set -euo pipefail
 
-BASE_URL="${1:-https://app.tpastream.com}"
+BASE_URL="${1:-${OPENAPI_BASE_URL:-https://app.tpastream.com}}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUTPUT="$SCRIPT_DIR/../openapi/tpastream-api.json"
+mkdir -p "$(dirname "$OUTPUT")"
 
 echo "Fetching ${BASE_URL}/openapi.json"
 TMP="$(mktemp)"
 trap 'rm -f "$TMP"' EXIT
 
-curl -fsSL --max-time 30 "${BASE_URL}/openapi.json" -o "$TMP"
+if ! curl -fsSL --max-time 30 "${BASE_URL}/openapi.json" -o "$TMP"; then
+  if [ -f "$OUTPUT" ]; then
+    echo "WARN: fetch from ${BASE_URL}/openapi.json failed; keeping existing $OUTPUT" >&2
+    exit 0
+  fi
+  echo "ERROR: fetch from ${BASE_URL}/openapi.json failed and no existing $OUTPUT to fall back to" >&2
+  exit 1
+fi
 
 if ! jq -e '.openapi and .paths and .info' "$TMP" > /dev/null; then
   echo "ERROR: response from ${BASE_URL}/openapi.json doesn't look like an OpenAPI spec" >&2

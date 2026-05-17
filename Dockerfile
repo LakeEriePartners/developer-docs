@@ -4,8 +4,11 @@
 FROM node:22-alpine AS build
 
 # git is needed for scripts/clone-sdk-docs.sh at build time;
-# python3 is needed for the script's sidebar generator.
-RUN apk add --no-cache git python3 bash
+# python3 is needed for the script's sidebar generator and
+# scripts/sync-openapi.sh's spec post-processor;
+# curl + jq are needed for scripts/sync-openapi.sh to fetch + validate
+# the live OpenAPI spec.
+RUN apk add --no-cache git python3 bash curl jq
 
 WORKDIR /app
 
@@ -16,25 +19,21 @@ RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 # Copy the rest of the source.
 COPY . .
 
-# SDK ref + OpenAPI source URL can be overridden at build time:
-#   docker build --build-arg SDK_REF=v0.8.0 --build-arg OPENAPI_URL=... .
+# Build args:
+#   SDK_REF      pin a non-default git ref for the SDK docs clone
+#                (default: latest semver tag of stream-connect-js-sdk)
+#   OPENAPI_URL  override the OpenAPI base URL (default: prod)
 ARG SDK_REF=""
-ARG OPENAPI_URL=""
+ARG OPENAPI_URL="https://app.tpastream.com"
 ENV SDK_REF=${SDK_REF}
 
-# Optionally re-snapshot the OpenAPI spec at build time. When unset,
-# the build uses the committed openapi/tpastream-api.json snapshot
-# (deterministic builds), so the default behavior is no network
-# fetch.
-RUN if [ -n "$OPENAPI_URL" ]; then \
-      echo "Refreshing OpenAPI snapshot from $OPENAPI_URL" && \
-      apk add --no-cache jq curl && \
-      ./scripts/sync-openapi.sh "$OPENAPI_URL"; \
-    fi
-
-# `npm run build` chains prebuild → clone-sdk-docs.sh +
-# `docusaurus gen-api-docs all`, then runs `docusaurus build`.
-RUN npm run build
+# `npm run build` chains prebuild → sync-openapi.sh +
+# clone-sdk-docs.sh + `docusaurus gen-api-docs all`, then runs
+# `docusaurus build`. The OpenAPI spec is fetched live every time;
+# stream's image bakes the merged Flask + FastAPI spec in at its own
+# build time, so what we fetch here is deterministic per stream
+# deploy.
+RUN OPENAPI_BASE_URL=$OPENAPI_URL npm run build
 
 # ─── 2. Runtime stage ──────────────────────────────────────────────────────
 FROM nginx:1.27-alpine

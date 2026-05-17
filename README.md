@@ -15,7 +15,7 @@ Three sources feed the build:
 | Source | Mechanism |
 |---|---|
 | Narrative docs in `docs/` | Authored here in MDX. |
-| REST API reference | `openapi/tpastream-api.json` snapshot → `docusaurus-plugin-openapi-docs` renders per-endpoint pages with try-it-out. |
+| REST API reference | `scripts/sync-openapi.sh` fetches the live `https://app.tpastream.com/openapi.json` at every build → post-processes (synthesizes `operationId`/`summary`/`tags` for the parts of the spec flask-smorest emits bare) → `docusaurus-plugin-openapi-docs` renders per-endpoint pages with try-it-out. The live spec is itself the merged Flask + FastAPI spec, baked into stream's image at its own build time. |
 | Connect SDK reference | `scripts/clone-sdk-docs.sh` clones `TPAStream/stream-connect-js-sdk` at the latest git tag and copies its `docs/` tree into `docs/sdk/` at build time. |
 
 ## Local development
@@ -27,9 +27,9 @@ npm run start        # http://localhost:3000
 
 `npm run start` and `npm run build` both run a `prebuild` step that:
 
-1. Clones the latest SDK tag and regenerates `docs/sdk/`.
-2. Runs `docusaurus gen-api-docs all` to materialize the API reference
-   pages from `openapi/tpastream-api.json`.
+1. Fetches the live OpenAPI spec (graceful no-op if you've fetched once before and the network is now unreachable).
+2. Clones the latest SDK tag and regenerates `docs/sdk/`.
+3. Runs `docusaurus gen-api-docs all` to materialize the API reference pages.
 
 To preview an unreleased SDK branch:
 
@@ -38,15 +38,10 @@ SDK_REF=0.8.0-react19-tailwind npm run sync-sdk-docs
 npm run start
 ```
 
-## Refreshing the OpenAPI snapshot
-
-The committed snapshot keeps builds deterministic. To bring it back
-in line with prod after the API changes:
+To preview against a non-prod OpenAPI source (a staging webapp, a `kubectl port-forward`, etc.):
 
 ```bash
-./scripts/sync-openapi.sh
-git add openapi/tpastream-api.json
-git commit -m "docs: refresh OpenAPI snapshot"
+OPENAPI_BASE_URL=https://staging.example.com npm run start
 ```
 
 ## Docker
@@ -61,8 +56,8 @@ Build args:
 
 - `SDK_REF=<git-ref>` — pin a specific SDK ref instead of the latest
   tag (useful for testing an unreleased branch in CI).
-- `OPENAPI_URL=https://...` — re-fetch the spec at build time instead
-  of using the committed snapshot.
+- `OPENAPI_URL=https://staging-host` — point the spec fetch at a
+  non-prod host. Defaults to `https://app.tpastream.com`.
 
 ## Production
 

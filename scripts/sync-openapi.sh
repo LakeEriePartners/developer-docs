@@ -248,7 +248,7 @@ if not spec["info"].get("description", "").strip():
         "and rebuilt on every docs deploy, so what you see here "
         "matches what the API serves right now.\n\n"
         "Each endpoint page includes a try-it-out console; you'll "
-        "need an SSH-JWT bearer or an API token to authenticate "
+        "need an `SSH-JWT` token or an API token to authenticate "
         "(see [Authentication](/api/authentication))."
     )
 

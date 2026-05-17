@@ -89,6 +89,44 @@ mkdir -p "$SDK_DEST"
 # Copy everything from the SDK docs/ tree (markdown + screenshot subdirs).
 cp -R "$SRC/." "$SDK_DEST/"
 
+# Rewrite markdown links of the form `../something-outside-docs/...`
+# to absolute GitHub blob URLs at the cloned ref. The SDK docs link
+# to sibling source files (../assets/sdk/types.ts) and to the
+# sibling sdk-hook package (../sdk-hook/docs/README.md) — those work
+# on github.com but resolve to /assets/... / /sdk-hook/... inside
+# our build, which 404s. Intra-docs links (./foo.md,
+# ./screenshots/x.png) are left alone.
+SDK_REPO_PATH="$(echo "$SDK_REPO" | sed -E 's|^https?://github.com/||; s|\.git$||')"
+GH_BLOB_BASE="https://github.com/${SDK_REPO_PATH}/blob/${REF}"
+python3 - "$SDK_DEST" "$GH_BLOB_BASE" <<'PYEOF'
+import os, re, sys
+
+dest, gh_base = sys.argv[1], sys.argv[2]
+# Match Markdown links: [text](../path/to/thing[#anchor]).
+# Skip ./… (intra-docs), absolute URLs, anchors-only.
+link_re = re.compile(r'(\[[^\]]*\]\()(\.\./[^)\s#]+)((?:#[^)\s]+)?\))')
+
+rewrites = 0
+for root, _, files in os.walk(dest):
+    for name in files:
+        if not (name.endswith(".md") or name.endswith(".mdx")):
+            continue
+        path = os.path.join(root, name)
+        with open(path, encoding="utf-8") as fh:
+            src = fh.read()
+        def repl(m):
+            global rewrites
+            target = m.group(2)[3:]  # strip the leading ../
+            rewrites += 1
+            return f"{m.group(1)}{gh_base}/{target}{m.group(3)}"
+        new = link_re.sub(repl, src)
+        if new != src:
+            with open(path, "w", encoding="utf-8") as fh:
+                fh.write(new)
+
+print(f"rewrote {rewrites} ../ link(s) to {gh_base}")
+PYEOF
+
 # README.md (SDK convention) → index.md (Docusaurus convention).
 if [ -f "$SDK_DEST/README.md" ]; then
   mv "$SDK_DEST/README.md" "$SDK_DEST/index.md"

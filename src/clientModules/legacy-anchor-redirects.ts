@@ -44,11 +44,13 @@ const PAGE_TO_ANCHOR_MAP: AnchorMap = {
     "detailed-client-usage-docs": "/sdk/client-usage",
     "other-useful-documentation-links": "/sdk/",
     "sdk-client-usage-docs": "/sdk/client-usage",
-    "npm-example-recommended": "/connect/quickstart#npm-recommended",
-    "cdn-example": "/connect/quickstart#hosted-cdn",
+    "npm-example-recommended": "/connect/quickstart#npm",
+    "cdn-example": "/connect/quickstart#demo-mode-cdn",
     "pinning-a-cdn-version": "/connect/quickstart#pinning-a-cdn-version",
-    "android-example": "/connect/quickstart#android-webview",
-    "ios-example": "/connect/quickstart#ios-wkwebview",
+    "android-example":
+      "/connect/quickstart#mobile-android-ios-react-native",
+    "ios-example":
+      "/connect/quickstart#mobile-android-ios-react-native",
     "change-log": "/sdk/",
     // Old per-version changelog anchors all fold to the SDK Reference now.
     "v0-4-8-latest": "/sdk/",

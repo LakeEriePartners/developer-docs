@@ -75,16 +75,6 @@ const config: Config = {
           position: "left",
         },
         { to: "/sdk/", label: "SDK Reference", position: "left" },
-        {
-          href: "https://app.tpastream.com/rapidoc",
-          label: "RapiDoc",
-          position: "right",
-        },
-        {
-          href: "https://github.com/TPAStream/stream-connect-js-sdk",
-          label: "GitHub",
-          position: "right",
-        },
       ],
     },
     footer: {
@@ -110,13 +100,26 @@ const config: Config = {
           ],
         },
         {
-          title: "More",
+          title: "Source",
           items: [
-            { label: "Sign in", href: "https://app.tpastream.com/login" },
+            {
+              label: "Connect SDK on GitHub",
+              href: "https://github.com/TPAStream/stream-connect-js-sdk",
+            },
             {
               label: "Connect SDK on npm",
               href: "https://www.npmjs.com/package/stream-connect-sdk",
             },
+            {
+              label: "These docs on GitHub",
+              href: "https://github.com/LakeEriePartners/developer-docs",
+            },
+          ],
+        },
+        {
+          title: "More",
+          items: [
+            { label: "Sign in", href: "https://app.tpastream.com/login" },
             {
               label: "Privacy Policy",
               href: "https://app.tpastream.com/privacy",

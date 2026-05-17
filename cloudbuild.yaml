@@ -1,0 +1,55 @@
+# Mirrors LakeEriePartners/tpastream-marketing-site/cloudbuild.yaml.
+# Build → push (tag + latest) → kubectl set image → wait for rollout.
+steps:
+  - id: Build image
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - us-east4-docker.pkg.dev/$PROJECT_ID/developer-docs/developer-docs:$BUILD_ID
+      - -t
+      - us-east4-docker.pkg.dev/$PROJECT_ID/developer-docs/developer-docs:latest
+      - .
+
+  - id: Push build image
+    name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - us-east4-docker.pkg.dev/$PROJECT_ID/developer-docs/developer-docs:$BUILD_ID
+
+  - id: Push latest image
+    name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - us-east4-docker.pkg.dev/$PROJECT_ID/developer-docs/developer-docs:latest
+
+  - id: Deploy image to GKE
+    name: gcr.io/cloud-builders/kubectl
+    args:
+      - -n
+      - developer-docs
+      - set
+      - image
+      - deployment/developer-docs
+      - developer-docs=us-east4-docker.pkg.dev/$PROJECT_ID/developer-docs/developer-docs:$BUILD_ID
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=us-east4-a
+      - CLOUDSDK_CONTAINER_CLUSTER=primary2
+
+  - id: Wait for rollout
+    name: gcr.io/cloud-builders/kubectl
+    args:
+      - -n
+      - developer-docs
+      - rollout
+      - status
+      - deployment/developer-docs
+      - --timeout=300s
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=us-east4-a
+      - CLOUDSDK_CONTAINER_CLUSTER=primary2
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: 1800s

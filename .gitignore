@@ -1,2 +1,29 @@
+node_modules
 build
+.docusaurus
+.cache-loader
 repomix*
+
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Fetched at build time by scripts/sync-openapi.sh from the live
+# /openapi.json (stream's image bakes its merged spec in at its own
+# build time, so what we fetch here is deterministic per stream
+# deploy). The committed snapshot pattern was dropped — too easy to
+# let it rot.
+openapi/
+
+# Generated at build time by `docusaurus gen-api-docs all`
+docs/api-reference/
+
+# SDK docs are cloned in by scripts/clone-sdk-docs.sh at Docker build time;
+# the script runs in `prebuild` / `prestart`, so the directory is always
+# populated before docusaurus loads. Never commit anything in here.
+docs/sdk/

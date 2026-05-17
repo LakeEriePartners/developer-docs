@@ -1,0 +1,48 @@
+{
+  "name": "tpastream-developer-docs",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start --host 0.0.0.0",
+    "build": "docusaurus build",
+    "serve": "docusaurus serve --host 0.0.0.0",
+    "clear": "docusaurus clear",
+    "gen-api-docs": "docusaurus gen-api-docs",
+    "clean-api-docs": "docusaurus clean-api-docs",
+    "sync-openapi": "./scripts/sync-openapi.sh",
+    "sync-sdk-docs": "./scripts/clone-sdk-docs.sh",
+    "prebuild": "./scripts/sync-openapi.sh && ./scripts/clone-sdk-docs.sh && docusaurus clean-api-docs all && docusaurus gen-api-docs all",
+    "prestart": "./scripts/sync-openapi.sh && ./scripts/clone-sdk-docs.sh && docusaurus clean-api-docs all && docusaurus gen-api-docs all",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.10.1",
+    "@docusaurus/preset-classic": "3.10.1",
+    "@easyops-cn/docusaurus-search-local": "0.52.1",
+    "@mdx-js/react": "3.1.1",
+    "clsx": "2.1.1",
+    "docusaurus-plugin-openapi-docs": "5.0.2",
+    "docusaurus-theme-openapi-docs": "5.0.2",
+    "prism-react-renderer": "2.4.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "3.10.1",
+    "@docusaurus/tsconfig": "3.10.1",
+    "@docusaurus/types": "3.10.1",
+    "typescript": "5.6.3"
+  },
+  "engines": {
+    "node": ">=20.0"
+  },
+  "browserslist": {
+    "production": [">0.5%", "not dead", "not op_mini all"],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  }
+}

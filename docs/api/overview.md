@@ -5,13 +5,17 @@ sidebar_label: Overview
 
 # REST API
 
-TPA Stream exposes a REST API rooted at
-[`https://app.tpastream.com/api`](https://app.tpastream.com/api). All
-requests must use HTTPS.
+The canonical inventory of every endpoint TPA Stream exposes — full
+URLs, parameters, request and response shapes, and a try-it-out
+console — lives in the [API Reference](/api-reference/tpa-stream-api).
+It is generated at build time from the OpenAPI spec served live at
+[`https://app.tpastream.com/openapi.json`](https://app.tpastream.com/openapi.json).
+The pages in this section cover the cross-cutting concerns that
+apply to every endpoint: authentication, pagination, IP allowlists,
+key generation, and how a couple of distinctive field types
+(date ranges, etc.) are serialized.
 
-For the per-endpoint reference (request/response shape, parameters,
-try-it-out), see the [API Reference](/api-reference/tpa-stream-api), which is
-generated from the canonical OpenAPI spec at build time.
+All requests must use HTTPS.
 
 ## Authentication at a glance
 

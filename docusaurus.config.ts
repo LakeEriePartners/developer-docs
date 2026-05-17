@@ -59,7 +59,9 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: "TPA Stream",
+      // No `title` — the logo alone is the wordmark. Setting both
+      // rendered "<logo> TPA Stream" side-by-side which read as a
+      // duplicate.
       logo: {
         alt: "TPA Stream",
         src: "img/logo.png",

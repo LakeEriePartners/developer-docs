@@ -101,6 +101,20 @@ def tag_for(path):
         return (label, f"{label} endpoints.")
     return ("Other", "Endpoints that don't fit another category.")
 
+# Rename specific upstream tag names that read badly in the public
+# sidebar — typically tags that bake in the name of a vendor we
+# happen to integrate with (Mailgun, etc.). Once the underlying
+# Blueprint is renamed in stream/, the entry here is harmless until
+# we get around to dropping it. Map: upstream-tag → renamed-tag.
+TAG_RENAMES = {
+    # /api/v2/mailgun-webhook serves an inbound-webhook handler that
+    # currently happens to consume Mailgun's payload shape, but
+    # there's nothing fundamentally Mailgun-specific about it from a
+    # caller perspective. Group it under the generic "Webhooks" tag
+    # alongside the other webhook plumbing.
+    "Mailgun Webhook Event": "Webhooks",
+}
+
 # The upstream spec's individual operations DO carry per-operation
 # tags (flask-smorest derives them from the Blueprint name), but the
 # top-level `tags` array is empty so docusaurus-plugin-openapi-docs
@@ -195,11 +209,12 @@ for path, ops in spec.get("paths", {}).items():
     for method, op in ops.items():
         if method.startswith("x-") or method == "parameters": continue
         if not isinstance(op, dict): continue
-        existing = [t for t in (op.get("tags") or []) if t]
+        existing = [TAG_RENAMES.get(t, t) for t in (op.get("tags") or []) if t]
         if not existing:
             op["tags"] = [derived_name]
             tag_usage.add(derived_name)
         else:
+            op["tags"] = existing
             for t in existing: tag_usage.add(t)
 
 # Preserve any pre-existing top-level tag descriptions.
@@ -212,6 +227,30 @@ spec["tags"] = [
     {"name": name, "description": DESCRIPTIONS.get(name, f"{name} endpoints.")}
     for name in sorted(tag_usage)
 ]
+
+# Synthesize info.description if the upstream spec doesn't ship one.
+# docusaurus-plugin-openapi-docs renders this on the API Reference
+# landing page (/api-reference/tpa-stream-api) — without it, the
+# "Introduction" section comes through empty. Fallback kicks in
+# until the canonical fix lands in stream's flask-smorest config.
+spec.setdefault("info", {})
+if not spec["info"].get("description", "").strip():
+    spec["info"]["description"] = (
+        "TPA Stream's REST API exposes the platform's core data model "
+        "— payers, employers, policy holders, claims, invoices, and "
+        "subscriptions — plus the webhook and SDK plumbing that drives "
+        "the [Connect SDK](/connect/overview).\n\n"
+        "For cross-cutting concerns (authentication, pagination, IP "
+        "allowlists, key generation, date-range serialization) see "
+        "the [REST API guide](/api/overview). The endpoint pages "
+        "below are auto-generated from the canonical OpenAPI spec at "
+        "[`https://app.tpastream.com/openapi.json`](https://app.tpastream.com/openapi.json) "
+        "and rebuilt on every docs deploy, so what you see here "
+        "matches what the API serves right now.\n\n"
+        "Each endpoint page includes a try-it-out console; you'll "
+        "need an SSH-JWT bearer or an API token to authenticate "
+        "(see [Authentication](/api/authentication))."
+    )
 
 with open(dst, "w") as fh:
     json.dump(spec, fh, sort_keys=True, indent=2)

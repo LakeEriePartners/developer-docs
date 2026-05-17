@@ -228,6 +228,18 @@ spec["tags"] = [
     for name in sorted(tag_usage)
 ]
 
+# Inject `servers` if the upstream spec doesn't define it. Without
+# this, docusaurus-plugin-openapi-docs' code samples default to the
+# docs site's own hostname (developers.tpastream.com), which yields
+# nonsense like `curl https://developers.tpastream.com/api/...` —
+# the API lives at app.tpastream.com. Canonical fix is in stream's
+# flask-smorest config (companion stream PR); this fallback kicks
+# in only when info.servers is unset.
+if not spec.get("servers"):
+    spec["servers"] = [
+        {"url": "https://app.tpastream.com", "description": "Production"}
+    ]
+
 # Synthesize info.description if the upstream spec doesn't ship one.
 # docusaurus-plugin-openapi-docs renders this on the API Reference
 # landing page (/api-reference/tpa-stream-api) — without it, the

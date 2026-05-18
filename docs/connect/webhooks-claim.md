@@ -25,7 +25,7 @@ that URL.
 
 ## Replaying a claim post
 
-<img src="/img/replay-claim-webhook.png" alt="Replay claim webhook" width="400" />
+<img src="https://tpastream-public.s3.amazonaws.com/webapp-docs/claims/replay-claim-webhook.png" alt="Replay claim webhook" width="700" />
 
 To manually replay a claim post, find the claim on the claims page
 and click **Replay webhook**. If the button isn't shown, verify that

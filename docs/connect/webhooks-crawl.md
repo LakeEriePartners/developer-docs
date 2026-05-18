@@ -33,12 +33,13 @@ like the [Claim Webhook URL](/connect/webhooks-claim#configuring-the-url).
 
 ## Replaying a crawl completion post
 
-<img src="/img/replay-crawl-webhook.png" alt="Replay crawl webhook" width="500" />
+<img src="https://tpastream-public.s3.amazonaws.com/webapp-docs/policy-holders/replay-crawl-webhook.png" alt="Replay crawl webhook" width="700" />
 
-To manually replay a first-completion webhook post, find the member
-on the member page. Under **Policy Holders**, there's a button to
-replay the webhook request. If the button isn't shown, verify that
-the feature is enabled and a URL is set.
+To manually replay a first-completion webhook post, open the
+**Policy Holders** page, find the policy holder, and pick
+**Retry First Crawl Completion Webhook** from the row action menu.
+If the option isn't shown, verify that the feature is enabled and a
+URL is set.
 
 The replay is useful for testing. If a crawl for that policy holder
 has not happened yet, the replay returns a failure. Note: replayed

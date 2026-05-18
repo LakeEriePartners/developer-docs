@@ -17,7 +17,7 @@ Stream.
 To edit the claim webhook URL, open **Account Settings** on the
 settings page.
 
-<img src="/img/account-settings.png" alt="Account settings" width="700" />
+<img src="https://tpastream-public.s3.amazonaws.com/webapp-docs/settings/account-settings.png" alt="Account settings" width="700" />
 
 You'll only see this setting if the claim webhook feature is enabled
 on your account. Once the webhook URL is set, all future posts go to

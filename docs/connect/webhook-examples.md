@@ -115,8 +115,13 @@ the POST body, with `Content-Type: application/json`.
         "last_name": "Appleseed",
         "email": "sally@appleseed.com",
         "ssn": "999999999",
-        "payer_patient_id": "5a57ae867b66d87bfeaac2c5b98ed8dc",
         "date_of_birth": "1985-06-12",
+        "payer_identities": [
+          {
+            "payer_id": 1697,
+            "payer_patient_id": "5a57ae867b66d87bfeaac2c5b98ed8dc"
+          }
+        ],
         "relationship": "spouse",
         "createddate": "2017-07-01T16:51:16.701956",
         "modifieddate": "2017-07-01T16:51:16.701956"

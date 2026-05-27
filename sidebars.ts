@@ -11,6 +11,7 @@ const sidebars: SidebarsConfig = {
       collapsed: false,
       items: [
         "connect/quickstart",
+        "connect/origin-policy",
         "connect/webhooks-claim",
         "connect/webhooks-crawl",
         "connect/webhook-security",

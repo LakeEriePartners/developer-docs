@@ -1,0 +1,37 @@
+# Woodpecker CI for the developer docs [DEVOPS-44].
+# 1:1 port of cloudbuild.yaml: kaniko build+push to Artifact Registry,
+# then kubectl set image + rollout status. Master-only.
+#
+# Auth: the `gcp_sa_key` secret (woodpecker-ci GCP SA — artifactregistry.writer
+# on the developer-docs repo + namespaced deploy RBAC in the developer-docs
+# namespace), provisioned in stream-infrastructure (woodpecker-ci-iam.tf).
+
+when:
+  - event: push
+    branch: master
+
+steps:
+  - name: build-push
+    image: woodpeckerci/plugin-kaniko:2.3.1
+    settings:
+      registry: us-east4-docker.pkg.dev
+      # repo must NOT include the registry host (the plugin prepends it).
+      repo: noble-particle-258921/developer-docs/developer-docs
+      tags:
+        - ${CI_COMMIT_SHA}
+        - latest
+      json_key:
+        from_secret: gcp_sa_key
+
+  - name: deploy
+    image: google/cloud-sdk:570.0.0
+    environment:
+      GCP_SA_KEY:
+        from_secret: gcp_sa_key
+      IMAGE: us-east4-docker.pkg.dev/noble-particle-258921/developer-docs/developer-docs:${CI_COMMIT_SHA}
+    commands:
+      - printf '%s' "$GCP_SA_KEY" > /tmp/key.json
+      - gcloud auth activate-service-account --key-file=/tmp/key.json
+      - gcloud container clusters get-credentials primary2 --zone us-east4-a --project noble-particle-258921
+      - kubectl -n developer-docs set image deployment/developer-docs developer-docs="$IMAGE"
+      - kubectl -n developer-docs rollout status deployment/developer-docs --timeout=300s

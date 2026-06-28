@@ -67,6 +67,13 @@ The CDN is versioned. The script tag's `src` selects the version:
   specific version (e.g. `sdk-v-0.8.0.js`). Pinned versions remain
   available indefinitely.
 
+## Host page must be served over HTTPS
+
+The SDK transmits health-plan credentials and refuses to mount on a
+plain `http://` host page (other than `localhost` / `127.0.0.1` /
+`[::1]` for local development). See [Origin Policy](./origin-policy)
+for the full rules and what the error looks like if you hit it.
+
 ## Mobile (Android, iOS, React Native)
 
 The SDK is web-first. The recommended mobile integration is to embed

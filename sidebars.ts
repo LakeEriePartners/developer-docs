@@ -20,6 +20,18 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
+      label: "Connect API",
+      link: { type: "doc", id: "connect-api/overview" },
+      collapsed: false,
+      items: [
+        "connect-api/authentication",
+        "connect-api/quickstart",
+        "connect-api/two-factor",
+        "connect-api/reference",
+      ],
+    },
+    {
+      type: "category",
       label: "REST API",
       link: { type: "doc", id: "api/overview" },
       collapsed: false,

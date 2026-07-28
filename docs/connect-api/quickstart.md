@@ -152,16 +152,30 @@ Three things to note:
   array** of tenant ids. A string will be rejected. Missing either
   returns `403`.
 - `task_id` identifies the validation now running against the carrier.
-  This is what you poll.
-- `task_token` is only needed if you subscribe to the
-  [event stream](/connect-api/two-factor#server-sent-events) instead of
-  polling. Server-side integrations generally should not.
+  This is what you watch.
+- `task_token` authenticates the
+  [event stream](/connect-api/two-factor#watching-progress-server-sent-events)
+  subscription for this validation. It is short-lived by design; a fresh
+  one is minted every time you GET the policy holder while the
+  validation is running.
 
 To **reconnect** an existing policy holder after a credential change,
 send the same body as a `PUT` to
 `/policy_holder_sdk/policy_holder/{policy_holder_id}`.
 
-## 5. Poll until the validation terminates
+## 5. Watch the validation
+
+The credential submit returned a `task_id` and a `task_token`.
+Subscribe to the event stream and states arrive as they happen:
+
+```bash
+curl -N "https://app.tpastream.com/v3/sdk/progress/3bb088ed-cc38-4e0f-919f-f2060014ac44/stream?token=$TASK_TOKEN"
+```
+
+Each connection is capped at ~10 minutes; on the `timeout` event,
+re-fetch the policy holder for a fresh `task_token` and resubscribe —
+the [MFA page](/connect-api/two-factor#reattaching) has the loop.
+Prefer not to hold streams open? Polling works too:
 
 ```bash
 tpa -G "$TPA_BASE/validate-credentials/630364/3bb088ed-cc38-4e0f-919f-f2060014ac44" \
@@ -172,11 +186,11 @@ tpa -G "$TPA_BASE/validate-credentials/630364/3bb088ed-cc38-4e0f-919f-f2060014ac
 { "data": { "id": "3bb088ed-...", "state": "PENDING" } }
 ```
 
-Poll every 3 to 5 seconds. You will land on one of:
+Either way, you will land on one of:
 
 | `state` | What it means | What to do |
 |---|---|---|
-| `PENDING` | Still working. | Keep polling. |
+| `PENDING` | Still working. | Keep watching. |
 | `WAITING_FOR_METHOD_CHOICE` | The carrier wants a one-time code and is offering delivery methods. | See [multi-factor](/connect-api/two-factor). |
 | `WAITING_FOR_TWO_FACTOR_CODE` | A code has been sent. | See [multi-factor](/connect-api/two-factor). |
 | `SUCCESS` | Validation finished. | Read `credentials_are_valid`. |

@@ -12,15 +12,18 @@ case — an integration that only handles the happy path will fail for a
 large minority of your members.
 
 While a validation waits on a code, the carrier is holding an
-authenticated session open. That session has a limited lifetime. This is
-the one place in the Connect API where a real person has to act inside a
-bounded window.
+authenticated session open, so the validation will not wait forever:
+**the member has about five minutes at each interactive step** (picking
+a delivery method, entering the code) before the validation gives up
+and the connection is marked as needing member attention. That number —
+not any transport detail — is the constraint to design your prompt UX
+around.
 
 ## The state machine
 
-After you submit credentials you have a `task_id`. Poll
-[`GET /validate-credentials/{policy_holder_id}/{task_id}`](/connect-api/reference#get-validate-credentials)
-and drive off `state`:
+After you submit credentials you have a `task_id`. Watch its `state`
+— over the [event stream](#watching-progress-server-sent-events) or by
+[polling](#polling-as-a-fallback) — and drive off it:
 
 ```
         POST credentials
@@ -66,7 +69,7 @@ and drive off `state`:
 
 ## Choosing a delivery method
 
-When you poll into `WAITING_FOR_METHOD_CHOICE`:
+When the state reaches `WAITING_FOR_METHOD_CHOICE`:
 
 ```json
 {
@@ -91,8 +94,9 @@ tpa -X PUT "$TPA_BASE/validate-credentials/630364/3bb088ed-..." -d '{
 }'
 ```
 
-Then keep polling. You will move through `TRIGGERING_TWO_FACTOR_AUTH`
-into `WAITING_FOR_TWO_FACTOR_CODE`.
+Then keep watching. You will move through `TRIGGERING_TWO_FACTOR_AUTH`
+into `WAITING_FOR_TWO_FACTOR_CODE`. From the moment the method list is
+offered, the member has about five minutes to pick one.
 
 Some carriers offer only one method and skip this state entirely, going
 straight to `WAITING_FOR_TWO_FACTOR_CODE`. Handle both.
@@ -106,24 +110,15 @@ tpa -X PUT "$TPA_BASE/validate-credentials/630364/3bb088ed-..." -d '{
 }'
 ```
 
-Same endpoint, different key. Keep polling afterward.
+Same endpoint, different key. Keep watching afterward. The five-minute
+clock applies here too: once the carrier sends the code, the member has
+about five minutes to supply it.
 
 If the carrier rejects the code — wrong digits, expired, mistyped — the
 state returns to `WAITING_FOR_TWO_FACTOR_CODE` with a `message`
 explaining why. Surface that message and let the member try again. Do
 **not** restart the credential submission; the carrier session is still
 open and a fresh submit will send a second code and confuse the member.
-
-## Polling cadence
-
-| Situation | Interval |
-|---|---|
-| Right after credential submit | 3 seconds |
-| Waiting on the member to pick a method or type a code | 5 seconds |
-| Anything past 2 minutes on the same state | 10 seconds |
-
-Stop polling once you reach `SUCCESS` or `FAILURE`. There is no reason
-to poll a terminal task, and no new information will arrive.
 
 ## Designing the member experience
 
@@ -144,34 +139,77 @@ work. What matters:
   validation is left hanging, and make sure the member can start a fresh
   attempt later.
 
-## Server-sent events
+## Watching progress: server-sent events
 
-There is also an event stream:
+The recommended way to watch a validation is the event stream — states
+arrive as they happen, with nothing to poll:
 
 ```
 GET https://app.tpastream.com/v3/sdk/progress/{task_id}/stream?token={task_token}
 ```
 
-It pushes the same state transitions as they happen, authenticated by the
-`task_token` returned alongside `task_id` on the credential submit.
+Authentication is the `task_token` returned alongside `task_id` on the
+credential submit — a short-lived JWT bound to that one task. From curl:
 
-**We recommend polling instead for server-side integrations.** The stream
-was built for browsers and carries browser-shaped constraints: the
-`task_token` is valid for about ten minutes, and the server closes the
-stream after roughly the same interval with a `timeout` event. A member
-who takes longer than that to find their phone will outlive the stream.
-The polling endpoint has neither limit and is authenticated the same way
-as every other call.
+```bash
+curl -N "https://app.tpastream.com/v3/sdk/progress/$TASK_ID/stream?token=$TASK_TOKEN"
+```
 
-If a stream does close on you, the underlying validation is unaffected —
-it keeps running, and polling will show you where it landed.
+Three event types arrive:
+
+| Event | Payload | Meaning |
+|---|---|---|
+| `state` | The task's current status and result data | Drive your state machine off this. |
+| `ping` | `{}` | Heartbeat every ~15s. Ignore. |
+| `timeout` | `{}` | This *connection* hit its ~10-minute cap. Resubscribe (below). The validation is unaffected. |
+
+`state` events carry the raw task metadata: `status` is the state name
+from the table above, and `result` holds the stage's data (for
+`WAITING_FOR_METHOD_CHOICE`, `result.method_list` is the delivery-method
+list). Treat any status you don't recognize as "still working".
+
+### Reattaching
+
+Each stream connection is capped at about ten minutes, and each
+`task_token` is scoped to roughly one connection — but the validation
+stays subscribable for its entire lifetime. When you receive `timeout`
+(or lose the connection):
+
+1. `GET /policy_holder_sdk/policy_holder/{id}` — while the validation
+   is alive, the response includes the active `task_id` and a **fresh
+   `task_token`**.
+2. Resubscribe to the stream with the new token.
+
+If a resubscribe fails with `401` and `Task not available`, the
+validation has reached a terminal state — read the outcome with
+[`GET /validate-credentials/...`](/connect-api/reference#get-validate-credentials)
+(or the policy-holder GET) rather than retrying the stream.
+
+One practical shortcut: for connection UX you can stop streaming at
+`TWO_FACTOR_AUTH_COMPLETE`. The task keeps running well past it —
+retrieving the member's claims can take a long while — but the answer
+your member is waiting for (did the connection work?) is already known,
+and claims reach you via the
+[claim webhook](/connect/webhooks-claim), not the stream.
+
+## Polling as a fallback
+
+If you'd rather not hold streams open,
+[`GET /validate-credentials/{policy_holder_id}/{task_id}`](/connect-api/reference#get-validate-credentials)
+returns the same states. Poll it every few seconds while a validation
+is in flight and stop on `SUCCESS` / `FAILURE`. It is authenticated
+like every other Connect API call and needs no `task_token`. Both
+transports are supported; pick whichever fits your architecture.
 
 ## Failure modes worth handling
 
 | Symptom | Cause | Response |
 |---|---|---|
 | `FAILURE` immediately after submit | Credentials rejected outright. | Show `message`, let the member re-enter. |
-| Stuck in `PENDING` past a few minutes | Carrier is slow or degraded. | Keep polling, but tell the member it's taking a while. |
+| Stuck in `PENDING` past a few minutes | Carrier is slow or degraded. | Keep watching, but tell the member it's taking a while. |
+| `WAITING_FOR_METHOD_CHOICE` / `WAITING_FOR_TWO_FACTOR_CODE` ends in `FAILURE` with no input sent | The member ran out the ~5-minute window at that stage. | The connection is marked as needing attention; let the member start a fresh attempt. |
+| Stream emits `timeout` | That connection hit its ~10-minute cap. | [Reattach](#reattaching); the validation is unaffected. |
+| Resubscribe returns `401` `Task not available` | The validation reached a terminal state. | Read the outcome via the GET; don't retry the stream. |
 | `WAITING_FOR_TWO_FACTOR_CODE` with a `message` | The previous code was rejected. | Show the message, accept another code. |
 | `SUCCESS` with `credentials_are_valid: false` | The carrier authenticated but the account has a problem. | Check `login_problem` on the policy holder. |
 | `SUCCESS` with `pending: true` | No verdict yet; we will keep trying in the background. | Treat as provisional success, not failure. |

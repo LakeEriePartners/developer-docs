@@ -130,7 +130,7 @@ failures return `422` with per-field detail.
 |---|---|
 | `policy_holder_id` | The connection. Persist this. |
 | `task_id` | The running validation. Poll it. |
-| `task_token` | Only needed for the [event stream](/connect-api/two-factor#server-sent-events). |
+| `task_token` | Only needed for the [event stream](/connect-api/two-factor#watching-progress-server-sent-events). |
 
 ---
 
@@ -171,7 +171,8 @@ mid-validation as success — drive off the validation task instead.
 
 ## GET /validate-credentials/\{policy_holder_id\}/\{task_id\} {#get-validate-credentials}
 
-The polling endpoint. See
+Point-in-time validation state — the polling alternative to the
+[event stream](#event-stream). See
 [Multi-factor authentication](/connect-api/two-factor) for the full state
 machine.
 
@@ -206,10 +207,31 @@ per call.
 | `method` | string | The exact string from `info.method_list`. |
 | `code` | string | The one-time code the member received. |
 
-Keep polling the `GET` after each call; this endpoint acknowledges the
+Keep watching the state after each call; this endpoint acknowledges the
 input rather than reporting the outcome.
 
 ---
+
+## Event stream {#event-stream}
+
+```
+GET https://app.tpastream.com/v3/sdk/progress/{task_id}/stream?token={task_token}
+```
+
+Server-sent events for one validation task. Note the base URL: this
+endpoint lives under `/v3/sdk`, not under the Connect API prefix, and
+authenticates with the `task_token` from the credential submit instead
+of the usual headers.
+
+Events: `state` (task status + stage data), `ping` (heartbeat,
+~15s), `timeout` (per-connection ~10-minute cap reached — re-fetch the
+policy holder for a fresh `task_token` and resubscribe). The stream
+closes itself after a terminal state. A subscribe attempt that returns
+`401` `Task not available` means the validation already finished; read
+the result via the GET above.
+
+Full usage, including the reattach loop:
+[Multi-factor authentication](/connect-api/two-factor#watching-progress-server-sent-events).
 
 ## GET /fix-credentials
 

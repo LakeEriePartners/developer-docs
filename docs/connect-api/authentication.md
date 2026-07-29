@@ -144,10 +144,10 @@ disabling that as a launch blocker, not a cleanup task.
 ## Rate limits
 
 There are no per-token rate limits on the Connect API today. That is not
-an invitation to poll aggressively — see the
-[polling guidance](/connect-api/two-factor#polling-cadence) for the
-cadence we expect while a validation is in flight. We will publish limits
-before enforcing them.
+an invitation to hammer the API — prefer the
+[event stream](/connect-api/two-factor#watching-progress-server-sent-events)
+for watching validations, and keep any polling to a few-second cadence.
+We will publish limits before enforcing them.
 
 ## Error responses
 

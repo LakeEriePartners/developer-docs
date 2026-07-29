@@ -43,7 +43,7 @@ flow off your front end entirely, not just restyled.
  1. POST /tpastream_sdk                    bootstrap the member, get carriers
  2. GET  /payer/{employer}/{payer}         get the carrier's credential form
  3. POST /policy_holder_sdk/policy_holder  submit credentials, get a task
- 4. GET  /validate-credentials/{ph}/{task} poll until terminal
+ 4.      /v3/sdk/progress/{task}/stream    watch progress (SSE; polling GET also works)
       └─ if multi-factor is required:
          PUT /validate-credentials/{ph}/{task}  {method}
          PUT /validate-credentials/{ph}/{task}  {code}
@@ -69,7 +69,8 @@ Roughly a third of credential submissions across our customer base end
 up challenged by the carrier for a one-time code. When that happens the
 carrier is holding an authenticated session open and waiting. Your
 backend can own that session and drive it, but a real person still has to
-read a code off their phone and give it to you inside a bounded window.
+read a code off their phone and give it to you — the validation allows
+about five minutes per prompt before giving up.
 
 Practically, that means your front end needs a way to prompt the member
 and hand the code back to your server. It does not mean you need our UI —

@@ -19,10 +19,9 @@ handling yourself, against the contract documented here.
 
 ## Should you use this?
 
-Probably not. Most integrations are better served by the SDK, and if
-your concern is visual control, [headless mode](/sdk/headless) gets you
-fully custom UI while we keep the state machine — far less work than
-this. The Connect API exists for the narrow case where the SDK
+Probably not. Most integrations are better served by the SDK, and the
+SDK's [headless mode](/sdk/headless) already supports fully custom UI
+on top of our state machine — far less work than this. The Connect API exists for the narrow case where the SDK
 genuinely cannot fit: the flow has to run from your own code and
 embedding our JavaScript is off the table. If you think that's you,
 talk to us before you build — we'll help you scope what you're

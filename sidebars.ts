@@ -22,7 +22,7 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Connect API",
       link: { type: "doc", id: "connect-api/overview" },
-      collapsed: false,
+      collapsed: true,
       items: [
         "connect-api/authentication",
         "connect-api/quickstart",

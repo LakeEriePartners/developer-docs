@@ -5,37 +5,28 @@ sidebar_label: Overview
 
 # Connect API
 
-The Connect API is the HTTP contract behind the
-[Connect SDK](/connect/overview). It lets you run the carrier-connection
-flow — pick a carrier, submit credentials, complete multi-factor
-authentication, report status — from **your own backend**, with your own
-UI, without embedding our JavaScript.
+The Connect API is the HTTP contract underneath the
+[Connect SDK](/connect/overview) — the same endpoints the SDK drives,
+documented directly for integrations that need to run the
+carrier-connection flow from their own code.
 
-The SDK and the Connect API are two clients for the same product. Both
-talk to the same endpoints, create the same records, and trigger the same
-crawls. Nothing about a connection made through the Connect API is
-second-class.
+**The SDK is the recommended integration.** It ships the entire flow —
+carrier picker, credential forms, MFA prompts, progress handling, error
+states — as a drop-in, and it is where our integration effort goes. The
+Connect API is the engine without the car: you build the UI, the MFA
+prompt plumbing, the state machine, the reattach logic, and the error
+handling yourself, against the contract documented here.
 
-## Which one should you use?
+## Should you use this?
 
-| Use the **SDK** when... | Use the **Connect API** when... |
-|---|---|
-| You want a working connect flow quickly and our wizard is close enough to your design. | You have a design system and want the connect flow rendered entirely by your own components. |
-| Credentials going straight from the member's browser to TPA Stream is what you want. | You already run a member-facing backend and would rather it broker the connection. |
-| Your app is primarily a web front end. | Your app is native mobile, or a server-rendered app where shipping our bundle is awkward. |
-| You don't want to own retry, state, or error handling. | You want the connection state machine in your own infrastructure, observable by your own tooling. |
-
-You can mix them. A tenant can run the SDK on one surface and the
-Connect API on another against the same token.
-
-:::note Not sure yet?
-If your only objection to the SDK is the visual design, look at
-[headless mode](/sdk/headless) first — it drops our stylesheet and lets
-you render the carrier picker, credentials form, and end screen with your
-own components while we keep the state machine. It's much less work than
-the Connect API. The Connect API is the right answer when you want the
-flow off your front end entirely, not just restyled.
-:::
+Probably not. Most integrations are better served by the SDK, and if
+your concern is visual control, [headless mode](/sdk/headless) gets you
+fully custom UI while we keep the state machine — far less work than
+this. The Connect API exists for the narrow case where the SDK
+genuinely cannot fit: the flow has to run from your own code and
+embedding our JavaScript is off the table. If you think that's you,
+talk to us before you build — we'll help you scope what you're
+taking on.
 
 ## What the flow looks like
 
@@ -43,12 +34,20 @@ flow off your front end entirely, not just restyled.
  1. POST /tpastream_sdk                    bootstrap the member, get carriers
  2. GET  /payer/{employer}/{payer}         get the carrier's credential form
  3. POST /policy_holder_sdk/policy_holder  submit credentials, get a task
- 4.      /v3/sdk/progress/{task}/stream    watch progress (SSE; polling GET also works)
+ 4. GET  /v3/sdk/progress/{task}/stream    watch progress (SSE — separate base URL, see below)
       └─ if multi-factor is required:
          PUT /validate-credentials/{ph}/{task}  {method}
          PUT /validate-credentials/{ph}/{task}  {code}
  5. GET  /policy_holder_sdk/policy_holder/{ph}  confirm final state
 ```
+
+Steps 1–3 and 5 are relative to the base URL
+(`https://app.tpastream.com/connect/v1`). Step 4 is the one deliberate
+exception: the progress stream is served by a different backend at
+`https://app.tpastream.com/v3/sdk/...` and authenticates with the
+per-task `task_token` instead of the usual headers — details in the
+[reference](/connect-api/reference#event-stream). A plain polling GET
+under the normal base URL works as an alternative.
 
 Steps 3 and 4 are the interesting part and are covered in detail in
 [Multi-factor authentication](/connect-api/two-factor).

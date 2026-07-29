@@ -15,11 +15,11 @@ options, lifecycle callbacks, error handling, MFA, theming), see the
 [SDK Reference](/sdk/), which is generated from the SDK repository's
 own docs at the version pinned in this build.
 
-:::tip Prefer to run the flow from your own backend?
-The SDK is one client for the Connect product; the
-[Connect API](/connect-api/overview) is the other. It exposes the same
-carrier-connection flow as plain HTTP so you can render the UI with your
-own components and keep the state machine on your servers.
+:::note
+For the rare integration that can't embed our JavaScript at all, the
+HTTP contract underneath this SDK is documented as the
+[Connect API](/connect-api/overview). Most integrations shouldn't need
+it — start with the SDK (or its [headless mode](/sdk/headless)).
 :::
 
 ## What it does

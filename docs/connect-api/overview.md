@@ -31,20 +31,20 @@ taking on.
 ## What the flow looks like
 
 ```
- 1. POST /tpastream_sdk                    bootstrap the member, get carriers
+ 1. POST /bootstrap                        create or resolve the member, get carriers
  2. GET  /payer/{employer}/{payer}         get the carrier's credential form
- 3. POST /policy_holder_sdk/policy_holder  submit credentials, get a task
- 4. GET  /v3/sdk/progress/{task}/stream    watch progress (SSE — separate base URL, see below)
+ 3. POST /policy_holder  submit credentials, get a task
+ 4. GET  /v3/connect/progress/{task}/stream    watch progress (SSE — separate base URL, see below)
       └─ if multi-factor is required:
          PUT /validate-credentials/{ph}/{task}  {method}
          PUT /validate-credentials/{ph}/{task}  {code}
- 5. GET  /policy_holder_sdk/policy_holder/{ph}  confirm final state
+ 5. GET  /policy_holder/{ph}  confirm final state
 ```
 
 Steps 1–3 and 5 are relative to the base URL
 (`https://app.tpastream.com/connect/v1`). Step 4 is the one deliberate
 exception: the progress stream is served by a different backend at
-`https://app.tpastream.com/v3/sdk/...` and authenticates with the
+`https://app.tpastream.com/v3/connect/...` and authenticates with the
 per-task `task_token` instead of the usual headers — details in the
 [reference](/connect-api/reference#event-stream). A plain polling GET
 under the normal base URL works as an alternative.

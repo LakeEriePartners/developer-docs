@@ -9,7 +9,7 @@ Base URL: `https://app.tpastream.com/connect/v1`
 
 Every request needs the headers described in
 [Authentication](/connect-api/authentication#headers). Every request
-except `POST /tpastream_sdk` must also
+except `POST /bootstrap` must also
 [identify the member](/connect-api/authentication#identifying-the-member).
 
 All successful responses are wrapped in a `data` envelope:
@@ -22,12 +22,12 @@ All successful responses are wrapped in a `data` envelope:
 
 | Method | Path | Purpose |
 |---|---|---|
-| `POST` | `/tpastream_sdk` | Bootstrap the member; list carriers |
+| `POST` | `/bootstrap` | Bootstrap the member; list carriers |
 | `GET` | `/payer/{employer_id}/{payer_id}` | Carrier detail and credential schema |
 | `GET` | `/terms_of_service` | Current terms of use HTML |
-| `POST` | `/policy_holder_sdk/policy_holder` | Submit credentials, start validation |
-| `PUT` | `/policy_holder_sdk/policy_holder/{id}` | Resubmit credentials for an existing connection |
-| `GET` | `/policy_holder_sdk/policy_holder/{id}` | Connection status |
+| `POST` | `/policy_holder` | Submit credentials, start validation |
+| `PUT` | `/policy_holder/{id}` | Resubmit credentials for an existing connection |
+| `GET` | `/policy_holder/{id}` | Connection status |
 | `GET` | `/validate-credentials/{ph_id}/{task_id}` | Validation state |
 | `PUT` | `/validate-credentials/{ph_id}/{task_id}` | Supply an MFA method or code |
 | `GET` | `/fix-credentials` | All of the member's connections |
@@ -35,7 +35,7 @@ All successful responses are wrapped in a `data` envelope:
 
 ---
 
-## POST /tpastream_sdk
+## POST /bootstrap
 
 Creates or resolves the member, attaches them to the employer, and
 returns the carriers available to them. The only endpoint that may
@@ -101,7 +101,7 @@ credential submit.
 
 ---
 
-## POST /policy_holder_sdk/policy_holder
+## POST /policy_holder
 
 Submits credentials, creates the connection, and dispatches a validation
 against the carrier.
@@ -134,7 +134,7 @@ failures return `422` with per-field detail.
 
 ---
 
-## PUT /policy_holder_sdk/policy_holder/\{policy_holder_id\}
+## PUT /policy_holder/\{policy_holder_id\}
 
 Identical body and response to the `POST`. Use when the member is fixing
 credentials on a connection that already exists rather than making a new
@@ -145,7 +145,7 @@ carrier returns `403`.
 
 ---
 
-## GET /policy_holder_sdk/policy_holder/\{policy_holder_id\}
+## GET /policy_holder/\{policy_holder_id\}
 
 **Query** — `email` (required), `employer_id` (required).
 
@@ -215,11 +215,11 @@ input rather than reporting the outcome.
 ## Event stream {#event-stream}
 
 ```
-GET https://app.tpastream.com/v3/sdk/progress/{task_id}/stream?token={task_token}
+GET https://app.tpastream.com/v3/connect/progress/{task_id}/stream?token={task_token}
 ```
 
 Server-sent events for one validation task. Note the base URL: this
-endpoint lives under `/v3/sdk`, not under the Connect API prefix, and
+endpoint lives under `/v3/connect`, not under the Connect API prefix, and
 authenticates with the `task_token` from the credential submit instead
 of the usual headers.
 
@@ -256,7 +256,7 @@ in on the carrier's website and is redirected back to your application.
 **This step requires a browser.** There is no server-to-server
 equivalent, because the member authenticates directly with the carrier.
 
-Both endpoints require the `X-SDK-State-Id` header — an opaque string you
+Both endpoints require the `X-Connect-State-Id` header — an opaque string you
 generate per member session and reuse across the flow.
 
 ### POST /interop

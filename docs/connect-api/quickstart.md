@@ -32,7 +32,7 @@ It creates or resolves the member, attaches them to the employer, and
 returns the carriers available to them.
 
 ```bash
-tpa -X POST "$TPA_BASE/tpastream_sdk" -d '{
+tpa -X POST "$TPA_BASE/bootstrap" -d '{
   "system_key": "EMP-1234",
   "vendor": "internal",
   "employer_name": "Acme Corp",
@@ -121,7 +121,7 @@ account on the member's behalf. They map to `accept` and
 ## 4. Submit credentials
 
 ```bash
-tpa -X POST "$TPA_BASE/policy_holder_sdk/policy_holder" -d '{
+tpa -X POST "$TPA_BASE/policy_holder" -d '{
   "user_email": "member@example.com",
   "employer_id": 203246,
   "payer_id": 6,
@@ -161,7 +161,7 @@ Three things to note:
 
 To **reconnect** an existing policy holder after a credential change,
 send the same body as a `PUT` to
-`/policy_holder_sdk/policy_holder/{policy_holder_id}`.
+`/policy_holder/{policy_holder_id}`.
 
 ## 5. Watch the validation
 
@@ -169,7 +169,7 @@ The credential submit returned a `task_id` and a `task_token`.
 Subscribe to the event stream and states arrive as they happen:
 
 ```bash
-curl -N "https://app.tpastream.com/v3/sdk/progress/3bb088ed-cc38-4e0f-919f-f2060014ac44/stream?token=$TASK_TOKEN"
+curl -N "https://app.tpastream.com/v3/connect/progress/3bb088ed-cc38-4e0f-919f-f2060014ac44/stream?token=$TASK_TOKEN"
 ```
 
 Each connection is capped at ~10 minutes; on the `timeout` event,
@@ -221,7 +221,7 @@ about a third of real connections hit it.
 ## 6. Confirm the connection
 
 ```bash
-tpa -G "$TPA_BASE/policy_holder_sdk/policy_holder/630364" \
+tpa -G "$TPA_BASE/policy_holder/630364" \
     --data-urlencode "employer_id=203246" \
     --data-urlencode "email=$TPA_MEMBER"
 ```

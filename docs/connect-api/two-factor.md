@@ -145,14 +145,14 @@ The recommended way to watch a validation is the event stream — states
 arrive as they happen, with nothing to poll:
 
 ```
-GET https://app.tpastream.com/v3/sdk/progress/{task_id}/stream?token={task_token}
+GET https://app.tpastream.com/v3/connect/progress/{task_id}/stream?token={task_token}
 ```
 
 Authentication is the `task_token` returned alongside `task_id` on the
 credential submit — a short-lived JWT bound to that one task. From curl:
 
 ```bash
-curl -N "https://app.tpastream.com/v3/sdk/progress/$TASK_ID/stream?token=$TASK_TOKEN"
+curl -N "https://app.tpastream.com/v3/connect/progress/$TASK_ID/stream?token=$TASK_TOKEN"
 ```
 
 Three event types arrive:
@@ -175,7 +175,7 @@ Each stream connection is capped at about ten minutes, and each
 stays subscribable for its entire lifetime. When you receive `timeout`
 (or lose the connection):
 
-1. `GET /policy_holder_sdk/policy_holder/{id}` — while the validation
+1. `GET /policy_holder/{id}` — while the validation
    is alive, the response includes the active `task_id` and a **fresh
    `task_token`**.
 2. Resubscribe to the stream with the new token.

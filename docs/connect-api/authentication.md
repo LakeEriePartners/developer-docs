@@ -26,8 +26,11 @@ All requests must use HTTPS.
 :::note Legacy path
 `https://app.tpastream.com/sdk-api` serves the identical surface and
 remains supported indefinitely — it is what the JavaScript SDK uses.
-New server-side integrations should use `/connect/v1`, which is the
-path this documentation is written against and the one covered by the
+The SDK-era route spellings (`/bootstrap` was `/tpastream_sdk`,
+`/policy_holder` was `/policy_holder_sdk/policy_holder`, and
+`X-Connect-State-Id` was `X-SDK-State-Id`) likewise remain valid
+aliases. New integrations should use `/connect/v1` and the names in
+these pages — that is the contract covered by the
 [stability commitment](/connect-api/overview#stability).
 :::
 
@@ -40,7 +43,7 @@ path this documentation is written against and the one covered by the
 | `Content-Type` | On writes | `application/json`. |
 | `X-Connect-Access-Token` | Conditional | A short-lived JWT minted from your secret key. Required for [`GET /fix-credentials`](/connect-api/reference#get-fix-credentials); optional but recommended elsewhere. |
 | `X-Tenant-Label` / `X-Tenant-Key` | Conditional | Your vendor label and tenant system key. Required if your token spans multiple tenants. |
-| `X-SDK-State-Id` | Conditional | An opaque string you generate per member session. Required only on the [Patient Access API](/connect-api/reference#patient-access-api) endpoints. |
+| `X-Connect-State-Id` | Conditional | An opaque string you generate per member session. Required only on the [Patient Access API](/connect-api/reference#patient-access-api) endpoints. |
 | `X-Is-Demo` | No | `1` to run against sandbox data. Omit or send `0` in production. |
 
 A minimal authenticated request:
@@ -55,7 +58,7 @@ curl https://app.tpastream.com/connect/v1/terms_of_service \
 ## Identifying the member
 
 Every endpoint except the initial
-[`POST /tpastream_sdk`](/connect-api/reference#post-tpastream_sdk)
+[`POST /bootstrap`](/connect-api/reference#post-bootstrap)
 must say which member the request concerns. Omitting it returns
 `403 Forbidden` with `Cannot provide empty user outside of initial post`.
 
@@ -67,7 +70,7 @@ How you pass it depends on the verb:
 | `POST` / `PUT` | `user_email` at the top level of the JSON body, or `user.email` in a nested `user` object |
 
 The email must match a member your token has already bootstrapped via
-`POST /tpastream_sdk`. That call is the only one that may reference a
+`POST /bootstrap`. That call is the only one that may reference a
 member who doesn't exist yet — it creates them.
 
 ## Your two keys

@@ -5,7 +5,7 @@ sidebar_label: Webhook Examples
 
 # Webhook Payload Examples
 
-Both example payloads below show the request body TPA Stream sends as
+The example payloads below show the request body TPA Stream sends as
 the POST body, with `Content-Type: application/json`.
 
 ## Claim webhook
@@ -138,6 +138,7 @@ the POST body, with `Content-Type: application/json`.
 ```json
 {
   "data": {
+    "crawl_claim_ids": [],
     "members": [
       {
         "id": 63167
@@ -149,6 +150,36 @@ the POST body, with `Content-Type: application/json`.
       "login_problem": "invalid"
     },
     "success": false
+  }
+}
+```
+
+On a successful crawl, `crawl_claim_ids` carries the ids of the claims
+retrieved by that crawl (empty on failures and on
+[manual replays](/connect/webhooks-crawl#replaying-a-crawl-completion-post)).
+
+## Login problem webhook
+
+```json
+{
+  "data": {
+    "members": [
+      {
+        "id": 63167,
+        "employer": {
+          "id": 999
+        }
+      }
+    ],
+    "policy_holder": {
+      "id": 189162,
+      "payer": {
+        "id": 42,
+        "name": "Anthem"
+      },
+      "login_correction_message": "The login information you provided for Anthem is invalid. Please re-enter your login information.",
+      "login_problem": "invalid"
+    }
   }
 }
 ```

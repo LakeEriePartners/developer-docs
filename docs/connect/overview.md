@@ -36,7 +36,17 @@ application via:
   claim.
 - [First Crawl Completion Webhook](/connect/webhooks-crawl) — fires
   once after the first successful crawl per policy holder.
+- [Login Problem Webhook](/connect/webhooks-login-problem) — fires
+  when a connected carrier login stops working (or starts working
+  again).
 
-Both webhook payloads are signed; see
-[Webhook Security](/connect/webhook-security) before you wire either
-up in production.
+All webhook payloads are signed; see
+[Webhook Security](/connect/webhook-security) before you wire any of
+them up in production.
+
+## Companion: events feed
+
+Webhooks are push-only. The [Events Feed](/connect/events-feed) is
+the durable, cursor-paged record of the same occurrences — use it to
+recover from missed webhooks, reconcile your consumer, or skip
+webhooks entirely and poll.

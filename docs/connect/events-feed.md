@@ -18,12 +18,14 @@ Webhooks are push: if your endpoint is down for longer than the
 the notification is gone and you have no way to know. The feed fixes
 that failure mode:
 
-- **Nothing can be missed.** Page forward with a cursor; an event is
-  never inserted behind a cursor you've already passed.
+- **Nothing can be missed** (within the 90-day retention window).
+  Page forward with a cursor; an event is never inserted behind a
+  cursor you've already passed.
 - **Self-serve reconciliation.** Periodically sweep the feed to verify
   your webhook consumer didn't drop anything.
 - **Recovery after downtime.** Come back up, resume from your last
-  cursor, and process everything that happened while you were down.
+  cursor, and process everything that happened while you were down —
+  complete as long as your cursor is newer than the retention window.
 
 You can use the feed **instead of** webhooks (poll it on a schedule)
 or **alongside** them (webhooks as the low-latency signal, the feed as
@@ -32,7 +34,7 @@ after they occur — typically within a minute or two.
 
 ## Endpoint
 
-```
+```text
 GET https://app.tpastream.com/api/v2/events
 ```
 
@@ -110,8 +112,10 @@ Guarantees to build against:
 - Delivery is **at-least-once from your perspective** (you choose when
   to advance the cursor), so make processing idempotent.
 - Events are retained for **90 days**. Don't let a consumer lag longer
-  than that; for cold-start backfills beyond the window, use the REST
-  API instead.
+  than that. If your cursor is older than the retention window (or you
+  are backfilling from before the feed existed), treat it as a cold
+  start: reconcile current state through the REST API, then resume the
+  feed from the oldest retained event (`after=0`).
 
 ## Relationship to webhook replays
 

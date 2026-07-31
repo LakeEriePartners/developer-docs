@@ -57,5 +57,5 @@ Like every TPA Stream webhook, the request is signed via the
 
 Webhook delivery is at-most-4-hours of retries. If your endpoint was
 down longer than that — or you want to reconcile — use the
-[Events Feed](/connect/events-feed), which durably records every
-login problem change and lets you page forward from a cursor.
+[Events Feed](/connect/events-feed), which records every login
+problem change for 90 days and lets you page forward from a cursor.

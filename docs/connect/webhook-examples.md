@@ -155,8 +155,9 @@ the POST body, with `Content-Type: application/json`.
 ```
 
 On a successful crawl, `crawl_claim_ids` carries the ids of the claims
-retrieved by that crawl (empty on failures and on
-[manual replays](/connect/webhooks-crawl#replaying-a-crawl-completion-post)).
+retrieved by that crawl; on failed crawls it is an empty array. On
+[manual replays](/connect/webhooks-crawl#replaying-a-crawl-completion-post)
+the field is omitted from the payload entirely.
 
 ## Login problem webhook
 

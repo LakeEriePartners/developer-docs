@@ -14,8 +14,10 @@ const sidebars: SidebarsConfig = {
         "connect/origin-policy",
         "connect/webhooks-claim",
         "connect/webhooks-crawl",
+        "connect/webhooks-login-problem",
         "connect/webhook-security",
         "connect/webhook-examples",
+        "connect/events-feed",
       ],
     },
     {

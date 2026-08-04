@@ -88,7 +88,7 @@ For **local development**:
 
 ## Related
 
-* [SDK Quickstart](/docs/connect/quickstart) — the smallest possible
+* [SDK Quickstart](/connect/quickstart) — the smallest possible
   page that mounts the SDK.
 * [Stream Connect SDK changelog][changelog] — `0.8.2` is the first
   release that includes the init-time guard.

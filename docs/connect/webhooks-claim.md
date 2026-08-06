@@ -39,7 +39,8 @@ your endpoint.
 
 POST with `Content-Type: application/json`. See
 [Webhook Examples](/connect/webhook-examples) for the full payload
-shape.
+shape, and [Claim Types](/api/claim-types) for the values the `type`
+field can take.
 
 ## Retry behavior and 406
 

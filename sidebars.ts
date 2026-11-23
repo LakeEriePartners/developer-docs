@@ -45,6 +45,7 @@ const sidebars: SidebarsConfig = {
         "api/ssh-keys",
         "api/date-ranges",
         "api/claim-types",
+        "api/insurance-cards",
       ],
     },
   ],
